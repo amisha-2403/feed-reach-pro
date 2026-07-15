@@ -207,7 +207,8 @@ function PasswordPair({
   register,
   errors,
 }: {
-  register: ReturnType<typeof useForm<AnySignup>>["register"];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  register: ReturnType<typeof useForm<any>>["register"];
   errors: Record<string, { message?: string } | undefined>;
 }) {
   return (
