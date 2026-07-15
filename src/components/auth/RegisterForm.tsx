@@ -67,9 +67,11 @@ function RoleTabs({ value, onChange }: { value: Role; onChange: (r: Role) => voi
 function RoleForm({ role, onSwitchToLogin }: { role: Role; onSwitchToLogin: () => void }) {
   const navigate = useNavigate();
   const schema = useMemo(() => schemaByRole[role], [role]);
-  const form = useForm<AnySignup>({
-    resolver: zodResolver(schema),
-    defaultValues: { role } as Partial<AnySignup> as AnySignup,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const form = useForm<any>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(schema as any),
+    defaultValues: { role },
     mode: "onBlur",
   });
   const {
@@ -80,7 +82,8 @@ function RoleForm({ role, onSwitchToLogin }: { role: Role; onSwitchToLogin: () =
 
   const err = errors as Record<string, { message?: string } | undefined>;
 
-  async function onSubmit(values: AnySignup) {
+  async function onSubmit(raw: Record<string, unknown>) {
+    const values = raw as AnySignup;
     const { email, password } = values;
     const meta: Record<string, string | undefined> = { role: values.role };
     if ("full_name" in values) meta.full_name = values.full_name;
