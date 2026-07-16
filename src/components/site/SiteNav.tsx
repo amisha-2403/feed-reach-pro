@@ -29,16 +29,20 @@ export function SiteNav() {
           <Logo />
 
           <div className="hidden items-center gap-6 md:flex">
-            {roleLinks.map((l) => (
-              <a
+            {navLinks.map((l) => (
+              <Link
                 key={l.label}
-                href={l.href}
+                to={l.to}
+                hash={l.hash}
                 className="text-sm font-medium text-ink/70 transition-colors hover:text-brand dark:text-foreground/70"
+                activeOptions={{ exact: true }}
+                activeProps={{ className: "text-brand" }}
               >
                 {l.label}
-              </a>
+              </Link>
             ))}
           </div>
+
         </div>
         <div className="flex items-center gap-2">
           {loading ? (
