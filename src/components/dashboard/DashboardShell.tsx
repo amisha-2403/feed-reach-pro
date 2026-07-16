@@ -30,12 +30,8 @@ export function DashboardShell({
     <div className="min-h-screen bg-surface">
       <header className="sticky top-0 z-40 border-b border-black/5 bg-surface/80 backdrop-blur-md dark:border-white/10 dark:bg-background/70">
         <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-6">
-          <Link to="/" className="flex items-center gap-2 text-brand">
-            <span aria-hidden className="grid size-6 place-items-center rounded-md bg-brand/10">
-              <span className="size-2 rounded-full bg-brand" />
-            </span>
-            <span className="font-semibold tracking-tight">GramSetu</span>
-          </Link>
+          <Logo />
+
           <div className="flex items-center gap-3">
             <span className="hidden text-xs font-medium uppercase tracking-wider text-ink-muted sm:inline">
               {ROLE_LABELS[role]}
