@@ -26,11 +26,11 @@ export function AuthShell({
           </Link>
           <div>
             <h2 className="text-balance text-3xl font-semibold leading-tight">
-              The direct line from farm to trough.
+              Village to village, hand to hand.
             </h2>
             <p className="mt-4 max-w-sm text-sm text-brand-foreground/75">
-              Join the hyperlocal supply chain built for village feed shops, livestock farmers,
-              and delivery partners.
+              Join the hyperlocal marketplace that bridges rural customers, farmers, local
+              agri-shops, and delivery partners on one dependable platform.
             </p>
           </div>
           <p className="text-xs text-brand-foreground/60">
