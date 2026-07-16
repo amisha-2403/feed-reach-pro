@@ -18,9 +18,9 @@ export function AuthShell({
       <div className="mx-auto grid min-h-screen max-w-6xl grid-cols-1 gap-0 px-6 py-10 lg:grid-cols-2 lg:gap-12">
         {/* Left brand rail */}
         <aside className="hidden flex-col justify-between rounded-3xl bg-brand p-10 text-brand-foreground shadow-[0_30px_80px_-30px_rgba(26,77,46,0.5)] lg:flex">
-          <Link to="/" className="flex items-center gap-2 text-sm font-medium">
-            <span aria-hidden className="grid size-6 place-items-center rounded-md bg-brand-foreground/15">
-              <span className="size-2 rounded-full bg-brand-foreground" />
+          <Link to="/" className="inline-flex items-center gap-2 text-sm font-medium">
+            <span aria-hidden className="grid size-7 place-items-center rounded-xl bg-brand-foreground/15">
+              <LogoMark size={22} />
             </span>
             GramSetu
           </Link>
