@@ -118,6 +118,8 @@
   --brand: oklch(0.62 0.12 148);
   --brand-light: oklch(0.72 0.1 148);
   --brand-foreground: oklch(0.15 0.01 130);
+  --brand-accent: oklch(0.75 0.15 55);
+  --brand-accent-foreground: oklch(0.15 0.01 130);
 
   --surface: oklch(0.16 0.01 130);
   --ink: oklch(0.97 0.005 90);
