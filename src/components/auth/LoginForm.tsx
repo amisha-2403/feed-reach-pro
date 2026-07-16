@@ -72,7 +72,7 @@ export function LoginForm({
       </div>
       <SubmitButton loading={isSubmitting}>Sign in</SubmitButton>
       <p className="text-center text-xs text-ink-muted">
-        New to FeedConnect?{" "}
+        New to GramSetu?{" "}
         <button
           type="button"
           onClick={onSwitchToRegister}

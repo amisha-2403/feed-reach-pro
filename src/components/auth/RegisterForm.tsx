@@ -122,7 +122,7 @@ function RoleForm({ role, onSwitchToLogin }: { role: Role; onSwitchToLogin: () =
       onSwitchToLogin();
       return;
     }
-    toast.success(`Welcome to FeedConnect, ${meta.full_name ?? ""}`);
+    toast.success(`Welcome to GramSetu, ${meta.full_name ?? ""}`);
     navigate({ to: ROLE_DASHBOARDS[values.role] });
   }
 

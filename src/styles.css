@@ -13,7 +13,7 @@
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
 
-  --font-sans: "Public Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -29,6 +29,8 @@
   --color-brand: var(--brand);
   --color-brand-light: var(--brand-light);
   --color-brand-foreground: var(--brand-foreground);
+  --color-brand-accent: var(--brand-accent);
+  --color-brand-accent-foreground: var(--brand-accent-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
@@ -59,10 +61,12 @@
 :root {
   --radius: 0.75rem;
 
-  /* FeedConnect palette — Rural utility tactile */
+  /* GramSetu palette — Rural utility tactile */
   --brand: oklch(0.36 0.08 148);
   --brand-light: oklch(0.5 0.07 148);
   --brand-foreground: oklch(0.985 0.005 90);
+  --brand-accent: oklch(0.72 0.16 55);
+  --brand-accent-foreground: oklch(0.19 0.01 130);
 
   --surface: oklch(0.985 0.005 90);
   --ink: oklch(0.19 0.01 130);
@@ -114,6 +118,8 @@
   --brand: oklch(0.62 0.12 148);
   --brand-light: oklch(0.72 0.1 148);
   --brand-foreground: oklch(0.15 0.01 130);
+  --brand-accent: oklch(0.75 0.15 55);
+  --brand-accent-foreground: oklch(0.15 0.01 130);
 
   --surface: oklch(0.16 0.01 130);
   --ink: oklch(0.97 0.005 90);

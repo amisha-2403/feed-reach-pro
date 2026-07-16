@@ -12,7 +12,7 @@ import { forgotPasswordSchema, type ForgotPasswordInput } from "@/lib/auth-schem
 export const Route = createFileRoute("/forgot-password")({
   head: () => ({
     meta: [
-      { title: "Reset your password — FeedConnect" },
+      { title: "Reset your password — GramSetu" },
       { name: "robots", content: "noindex" },
     ],
   }),

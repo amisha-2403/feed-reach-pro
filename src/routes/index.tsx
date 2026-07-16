@@ -89,7 +89,7 @@ function LandingPage() {
                 The direct line from farm to trough.
               </h1>
               <p className="mb-8 text-pretty text-base text-ink-muted sm:text-lg">
-                FeedConnect links village feed shops, livestock farmers, and delivery partners
+                GramSetu links village feed shops, livestock farmers, and delivery partners
                 through one dependable platform — so no household is ever short of animal feed.
               </p>
               <div className="flex flex-wrap items-center gap-4">

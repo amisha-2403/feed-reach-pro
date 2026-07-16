@@ -74,9 +74,9 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
-const SITE_TITLE = "FeedConnect — Hyperlocal animal feed supply chain";
+const SITE_TITLE = "GramSetu — Village to Village, Hand to Hand";
 const SITE_DESCRIPTION =
-  "FeedConnect connects livestock owners, local feed shops, farmer-suppliers, and delivery partners on one dependable platform. Order animal feed from nearby shops with same-day rural delivery.";
+  "GramSetu is the bridge of villages — a hyperlocal marketplace connecting rural customers, farmers, local agri-shops, and delivery partners so no household is ever short of animal feed or farming essentials.";
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
@@ -85,9 +85,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: SITE_TITLE },
       { name: "description", content: SITE_DESCRIPTION },
-      { name: "author", content: "FeedConnect" },
+      { name: "author", content: "GramSetu" },
       { property: "og:title", content: SITE_TITLE },
       { property: "og:description", content: SITE_DESCRIPTION },
+      { property: "og:site_name", content: "GramSetu" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: SITE_TITLE },
@@ -100,7 +101,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap",
       },
     ],
   }),

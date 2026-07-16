@@ -2,6 +2,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useSession } from "@/hooks/use-session";
 import { ROLE_DASHBOARDS, ROLE_LABELS } from "@/lib/roles";
 import { supabase } from "@/integrations/supabase/client";
+import { Logo } from "@/components/brand/Logo";
 
 const roleLinks = [
   { label: "Customer", href: "#customer" },
@@ -24,15 +25,8 @@ export function SiteNav() {
     <nav className="sticky top-0 z-50 w-full border-b border-black/5 bg-surface/80 backdrop-blur-md dark:border-white/10 dark:bg-background/70">
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-6">
         <div className="flex items-center gap-8">
-          <Link
-            to="/"
-            className="flex items-center gap-2 text-brand transition-opacity hover:opacity-80"
-          >
-            <span aria-hidden className="grid size-6 place-items-center rounded-md bg-brand/10">
-              <span className="size-2 rounded-full bg-brand" />
-            </span>
-            <span className="font-semibold tracking-tight">FeedConnect</span>
-          </Link>
+          <Logo />
+
           <div className="hidden items-center gap-6 md:flex">
             {roleLinks.map((l) => (
               <a

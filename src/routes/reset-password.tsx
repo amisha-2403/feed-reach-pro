@@ -12,7 +12,7 @@ import { resetPasswordSchema, type ResetPasswordInput } from "@/lib/auth-schemas
 export const Route = createFileRoute("/reset-password")({
   head: () => ({
     meta: [
-      { title: "Set a new password — FeedConnect" },
+      { title: "Set a new password — GramSetu" },
       { name: "robots", content: "noindex" },
     ],
   }),
