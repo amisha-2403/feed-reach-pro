@@ -4,11 +4,12 @@ import { ROLE_DASHBOARDS, ROLE_LABELS } from "@/lib/roles";
 import { supabase } from "@/integrations/supabase/client";
 import { Logo } from "@/components/brand/Logo";
 
-const roleLinks = [
-  { label: "Customer", href: "#customer" },
-  { label: "Shop", href: "#shop" },
-  { label: "Farmer", href: "#farmer" },
-  { label: "Delivery", href: "#delivery" },
+const navLinks = [
+  { label: "Home", to: "/" as const },
+  { label: "Marketplace", to: "/marketplace" as const },
+  { label: "Categories", to: "/marketplace" as const, hash: "categories" },
+  { label: "Orders", to: "/marketplace" as const, hash: "featured" },
+  { label: "Wishlist", to: "/marketplace" as const, hash: "featured" },
 ];
 
 export function SiteNav() {
