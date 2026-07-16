@@ -2,6 +2,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useSession } from "@/hooks/use-session";
 import { ROLE_DASHBOARDS, ROLE_LABELS } from "@/lib/roles";
 import { supabase } from "@/integrations/supabase/client";
+import { Logo } from "@/components/brand/Logo";
 
 const roleLinks = [
   { label: "Customer", href: "#customer" },
