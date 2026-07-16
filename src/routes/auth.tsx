@@ -17,8 +17,8 @@ export const Route = createFileRoute("/auth")({
   validateSearch: authSearch,
   head: () => ({
     meta: [
-      { title: "Sign in — FeedConnect" },
-      { name: "description", content: "Sign in or create your FeedConnect account." },
+      { title: "Sign in — GramSetu" },
+      { name: "description", content: "Sign in or create your GramSetu account." },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -51,7 +51,7 @@ function AuthPage() {
 
   return (
     <AuthShell
-      title={mode === "signin" ? "Welcome back" : "Create your FeedConnect account"}
+      title={mode === "signin" ? "Welcome back" : "Create your GramSetu account"}
       subtitle={
         mode === "signin"
           ? "Sign in to place orders, manage your shop, or fulfill deliveries."

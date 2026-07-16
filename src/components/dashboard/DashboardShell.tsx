@@ -33,7 +33,7 @@ export function DashboardShell({
             <span aria-hidden className="grid size-6 place-items-center rounded-md bg-brand/10">
               <span className="size-2 rounded-full bg-brand" />
             </span>
-            <span className="font-semibold tracking-tight">FeedConnect</span>
+            <span className="font-semibold tracking-tight">GramSetu</span>
           </Link>
           <div className="flex items-center gap-3">
             <span className="hidden text-xs font-medium uppercase tracking-wider text-ink-muted sm:inline">

@@ -21,7 +21,7 @@ export function AuthShell({
             <span aria-hidden className="grid size-6 place-items-center rounded-md bg-brand-foreground/15">
               <span className="size-2 rounded-full bg-brand-foreground" />
             </span>
-            FeedConnect
+            GramSetu
           </Link>
           <div>
             <h2 className="text-balance text-3xl font-semibold leading-tight">
@@ -33,7 +33,7 @@ export function AuthShell({
             </p>
           </div>
           <p className="text-xs text-brand-foreground/60">
-            © {new Date().getFullYear()} FeedConnect
+            © {new Date().getFullYear()} GramSetu
           </p>
         </aside>
 
@@ -47,7 +47,7 @@ export function AuthShell({
               <span aria-hidden className="grid size-6 place-items-center rounded-md bg-brand/10">
                 <span className="size-2 rounded-full bg-brand" />
               </span>
-              FeedConnect
+              GramSetu
             </Link>
             <h1 className="text-balance text-2xl font-semibold tracking-tight text-ink">
               {title}

@@ -59,7 +59,7 @@
 :root {
   --radius: 0.75rem;
 
-  /* FeedConnect palette — Rural utility tactile */
+  /* GramSetu palette — Rural utility tactile */
   --brand: oklch(0.36 0.08 148);
   --brand-light: oklch(0.5 0.07 148);
   --brand-foreground: oklch(0.985 0.005 90);

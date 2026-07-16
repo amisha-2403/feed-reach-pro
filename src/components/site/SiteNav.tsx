@@ -31,7 +31,7 @@ export function SiteNav() {
             <span aria-hidden className="grid size-6 place-items-center rounded-md bg-brand/10">
               <span className="size-2 rounded-full bg-brand" />
             </span>
-            <span className="font-semibold tracking-tight">FeedConnect</span>
+            <span className="font-semibold tracking-tight">GramSetu</span>
           </Link>
           <div className="hidden items-center gap-6 md:flex">
             {roleLinks.map((l) => (

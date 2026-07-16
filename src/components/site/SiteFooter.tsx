@@ -4,7 +4,7 @@ export function SiteFooter() {
       <div className="mx-auto max-w-7xl px-6">
         <div className="flex flex-col items-start justify-between gap-12 md:flex-row">
           <div className="flex max-w-sm flex-col gap-4">
-            <span className="font-semibold text-brand">FeedConnect</span>
+            <span className="font-semibold text-brand">GramSetu</span>
             <p className="text-sm text-ink-muted">
               Supporting rural economies through smarter animal nutrition supply chains — from the
               farm gate to the feeding trough.
@@ -21,7 +21,7 @@ export function SiteFooter() {
         </div>
         <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-black/5 pt-8 md:flex-row dark:border-white/10">
           <span className="text-xs text-ink-muted">
-            © {new Date().getFullYear()} FeedConnect Technologies. All rights reserved.
+            © {new Date().getFullYear()} GramSetu Technologies. All rights reserved.
           </span>
           <span className="text-xs text-ink-muted">Built for rural India · v0.1</span>
         </div>

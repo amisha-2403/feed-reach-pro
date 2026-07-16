@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { DashboardGrid, DashboardShell } from "@/components/dashboard/DashboardShell";
 
 export const Route = createFileRoute("/_authenticated/shop")({
-  head: () => ({ meta: [{ title: "Shop dashboard — FeedConnect" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "Shop dashboard — GramSetu" }, { name: "robots", content: "noindex" }] }),
   component: ShopDashboard,
 });
 
