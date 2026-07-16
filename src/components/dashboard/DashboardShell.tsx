@@ -5,6 +5,7 @@ import { LogOut } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/hooks/use-session";
 import { ROLE_LABELS, type AppRole } from "@/lib/roles";
+import { Logo } from "@/components/brand/Logo";
 
 export function DashboardShell({
   role,
