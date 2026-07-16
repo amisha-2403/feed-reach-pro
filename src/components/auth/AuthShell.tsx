@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
+import { Logo, LogoMark } from "@/components/brand/Logo";
 
 export function AuthShell({
   title,
