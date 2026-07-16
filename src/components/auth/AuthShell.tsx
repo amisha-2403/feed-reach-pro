@@ -41,15 +41,9 @@ export function AuthShell({
         {/* Right form area */}
         <main className="flex flex-col justify-center">
           <div className="mx-auto w-full max-w-md">
-            <Link
-              to="/"
-              className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-brand lg:hidden"
-            >
-              <span aria-hidden className="grid size-6 place-items-center rounded-md bg-brand/10">
-                <span className="size-2 rounded-full bg-brand" />
-              </span>
-              GramSetu
-            </Link>
+            <div className="mb-8 lg:hidden">
+              <Logo />
+            </div>
             <h1 className="text-balance text-2xl font-semibold tracking-tight text-ink">
               {title}
             </h1>
