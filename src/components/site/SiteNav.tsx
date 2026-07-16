@@ -4,11 +4,12 @@ import { ROLE_DASHBOARDS, ROLE_LABELS } from "@/lib/roles";
 import { supabase } from "@/integrations/supabase/client";
 import { Logo } from "@/components/brand/Logo";
 
-const roleLinks = [
-  { label: "Customer", href: "#customer" },
-  { label: "Shop", href: "#shop" },
-  { label: "Farmer", href: "#farmer" },
-  { label: "Delivery", href: "#delivery" },
+const navLinks = [
+  { label: "Home", to: "/" as const },
+  { label: "Marketplace", to: "/marketplace" as const },
+  { label: "Categories", to: "/marketplace" as const, hash: "categories" },
+  { label: "Orders", to: "/marketplace" as const, hash: "featured" },
+  { label: "Wishlist", to: "/marketplace" as const, hash: "featured" },
 ];
 
 export function SiteNav() {
@@ -28,16 +29,20 @@ export function SiteNav() {
           <Logo />
 
           <div className="hidden items-center gap-6 md:flex">
-            {roleLinks.map((l) => (
-              <a
+            {navLinks.map((l) => (
+              <Link
                 key={l.label}
-                href={l.href}
+                to={l.to}
+                hash={l.hash}
                 className="text-sm font-medium text-ink/70 transition-colors hover:text-brand dark:text-foreground/70"
+                activeOptions={{ exact: true }}
+                activeProps={{ className: "text-brand" }}
               >
                 {l.label}
-              </a>
+              </Link>
             ))}
           </div>
+
         </div>
         <div className="flex items-center gap-2">
           {loading ? (
