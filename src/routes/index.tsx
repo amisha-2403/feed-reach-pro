@@ -22,8 +22,8 @@ import {
   Home,
   Star,
   Smartphone,
-  Apple as AppleIcon,
   Play,
+
 } from "lucide-react";
 
 import { SiteNav } from "@/components/site/SiteNav";
