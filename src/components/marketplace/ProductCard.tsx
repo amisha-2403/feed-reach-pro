@@ -9,6 +9,12 @@ export function ProductCard({ product }: ProductCardProps) {
   const discount = Math.round(
     ((product.originalPrice - product.price) / product.originalPrice) * 100,
   );
+  const stock = product.stock ?? "in-stock";
+  const stockConfig = {
+    "in-stock": { label: "In Stock", cls: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400" },
+    "low-stock": { label: "Low Stock", cls: "bg-amber-500/15 text-amber-700 dark:text-amber-400" },
+    "out-of-stock": { label: "Out of Stock", cls: "bg-rose-500/10 text-rose-700 dark:text-rose-400" },
+  }[stock];
 
   return (
     <article className="group relative flex flex-col overflow-hidden rounded-2xl bg-surface ring-1 ring-black/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_50px_-20px_rgba(26,77,46,0.25)] hover:ring-brand/25 dark:bg-card dark:ring-white/10">
@@ -24,6 +30,11 @@ export function ProductCard({ product }: ProductCardProps) {
             {discount}% OFF
           </span>
         )}
+        <span
+          className={`absolute bottom-3 left-3 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider backdrop-blur-sm ${stockConfig.cls}`}
+        >
+          {stockConfig.label}
+        </span>
         <div className="absolute right-3 top-3 flex flex-col gap-2 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
           <IconChip label="Wishlist">
             <Heart className="size-4" />
@@ -33,6 +44,7 @@ export function ProductCard({ product }: ProductCardProps) {
           </IconChip>
         </div>
       </div>
+
 
       <div className="flex flex-1 flex-col gap-3 p-5">
         <div className="flex items-start justify-between gap-2">
