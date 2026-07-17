@@ -40,6 +40,7 @@ export interface Product {
   reviews: number;
   deliveryAvailable: boolean;
   category: string;
+  stock?: "in-stock" | "low-stock" | "out-of-stock";
 }
 
 export const FEATURED_PRODUCTS: Product[] = [
