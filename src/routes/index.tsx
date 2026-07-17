@@ -537,7 +537,7 @@ function HomePage() {
 
               <div className="flex flex-wrap gap-3">
                 <AppBadge icon={Play} store="Google Play" />
-                <AppBadge icon={AppleIcon} store="App Store" />
+                <AppBadge icon={Apple} store="App Store" />
               </div>
 
               <div className="mt-8 flex flex-wrap items-center gap-6 text-xs text-brand-foreground/80">
