@@ -1,325 +1,296 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import {
-  ArrowRight,
-  Store,
-  Truck,
-  ShieldCheck,
-  IndianRupee,
-  Search,
-  Star,
-  Package,
-  ClipboardCheck,
-  Bike,
-} from "lucide-react";
+import { useMemo, useState } from "react";
+import { createFileRoute } from "@tanstack/react-router";
+import { ShoppingCart } from "lucide-react";
 
 import { SiteNav } from "@/components/site/SiteNav";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { ProductCard } from "@/components/marketplace/ProductCard";
-import { CATEGORIES, FEATURED_PRODUCTS, TESTIMONIALS } from "@/lib/marketplace-data";
+import { MarketplaceHeader } from "@/components/marketplace/MarketplaceHeader";
+import { FiltersSidebar, DEFAULT_FILTERS, type FilterState } from "@/components/marketplace/FiltersSidebar";
+import { SellerCard } from "@/components/marketplace/SellerCard";
+import { QuickViewModal } from "@/components/marketplace/QuickViewModal";
+import { EmptyState } from "@/components/marketplace/EmptyState";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import {
+  CATEGORIES,
+  PRODUCTS,
+  SELLERS,
+  type Product,
+  type SortId,
+} from "@/lib/marketplace-data";
 
 export const Route = createFileRoute("/marketplace")({
   head: () => ({
     meta: [
-      { title: "Marketplace — GramSetu" },
+      { title: "Marketplace — GramSetu · Village to Village, Hand to Hand" },
       {
         name: "description",
         content:
-          "Shop animal feed, seeds, fertilizers, farm produce and daily agricultural essentials from trusted local sellers on GramSetu.",
+          "Shop animal feed, seeds, fertilizers, farm produce, veterinary supplies and organic products from verified farmers and village shops across rural India.",
       },
-      { property: "og:title", content: "GramSetu Marketplace — Village to Village, Hand to Hand" },
+      { property: "og:title", content: "GramSetu Marketplace — Agri-commerce for Rural India" },
       {
         property: "og:description",
         content:
-          "Hyperlocal rural commerce. Buy directly from farmers and local shops with same-day village delivery.",
+          "Hyperlocal rural commerce. Buy directly from verified farmers and shops with same-day village delivery.",
       },
     ],
   }),
   component: MarketplacePage,
 });
 
-const whyCards = [
-  {
-    icon: Store,
-    title: "Trusted Local Sellers",
-    body: "Every shop and farmer on GramSetu is verified through in-person visits and community references.",
-  },
-  {
-    icon: Truck,
-    title: "Hyperlocal Delivery",
-    body: "Orders reach your doorstep the same day through delivery partners who know every village lane.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Verified Farmers",
-    body: "Farm produce is traceable to the field with quality tags and batch numbers on every parcel.",
-  },
-  {
-    icon: IndianRupee,
-    title: "Affordable Prices",
-    body: "No middlemen, no markups — direct pricing from the source keeps rural households in control.",
-  },
-];
-
-const howSteps = [
-  { n: 1, icon: Search, title: "Browse Products", body: "Discover feed, seeds and essentials from sellers around you." },
-  { n: 2, icon: ClipboardCheck, title: "Place Order", body: "Add to cart and confirm — pay online or on delivery." },
-  { n: 3, icon: Package, title: "Shop Packs Order", body: "The local shop or farmer prepares your order with care." },
-  { n: 4, icon: Bike, title: "Delivery Partner Delivers", body: "A trusted rider brings it to your gate the same day." },
-];
-
 function MarketplacePage() {
+  const [query, setQuery] = useState("");
+  const [category, setCategory] = useState("all");
+  const [district, setDistrict] = useState("all");
+  const [village, setVillage] = useState("all");
+  const [sort, setSort] = useState<SortId>("featured");
+  const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
+  const [wishlist, setWishlist] = useState<Set<string>>(new Set());
+  const [cart, setCart] = useState<Set<string>>(new Set());
+  const [quickView, setQuickView] = useState<Product | null>(null);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+
+  const filtered = useMemo(() => {
+    let out = PRODUCTS.filter((p) => {
+      if (query && !`${p.name} ${p.brand ?? ""} ${p.seller}`.toLowerCase().includes(query.toLowerCase()))
+        return false;
+      if (category !== "all" && p.category !== category) return false;
+      if (district !== "all" && p.district !== district) return false;
+      if (village !== "all" && p.village !== village) return false;
+      if (filters.categories.length && !filters.categories.includes(p.category)) return false;
+      if (p.price < filters.priceRange[0] || p.price > filters.priceRange[1]) return false;
+      if (filters.sellerTypes.length && !filters.sellerTypes.includes(p.sellerType)) return false;
+      if (filters.availability.length && !filters.availability.includes(p.stock)) return false;
+      if (filters.minRating && p.rating < filters.minRating) return false;
+      if (filters.deliverySpeeds.length && !filters.deliverySpeeds.includes(p.deliverySpeed))
+        return false;
+      if (filters.villages.length && !filters.villages.includes(p.village)) return false;
+      if (filters.districts.length && !filters.districts.includes(p.district)) return false;
+      if (filters.verifiedOnly && !p.verified) return false;
+      if (filters.discountOnly && p.originalPrice <= p.price) return false;
+      return true;
+    });
+
+    const disc = (p: Product) => (p.originalPrice - p.price) / p.originalPrice;
+    switch (sort) {
+      case "price-asc": out = [...out].sort((a, b) => a.price - b.price); break;
+      case "price-desc": out = [...out].sort((a, b) => b.price - a.price); break;
+      case "rating": out = [...out].sort((a, b) => b.rating - a.rating); break;
+      case "newest": out = [...out].reverse(); break;
+      case "discount": out = [...out].sort((a, b) => disc(b) - disc(a)); break;
+      default: break;
+    }
+    return out;
+  }, [query, category, district, village, filters, sort]);
+
+  const toggleWishlist = (p: Product) => {
+    setWishlist((s) => {
+      const next = new Set(s);
+      next.has(p.id) ? next.delete(p.id) : next.add(p.id);
+      return next;
+    });
+  };
+
+  const clearAll = () => {
+    setFilters(DEFAULT_FILTERS);
+    setQuery("");
+    setCategory("all");
+    setDistrict("all");
+    setVillage("all");
+  };
+
+  const bySection = {
+    trending: PRODUCTS.filter((p) => p.tags.includes("trending")),
+    bestSellers: PRODUCTS.filter((p) => p.tags.includes("best-seller")),
+    recentlyAdded: PRODUCTS.filter((p) => p.tags.includes("new")),
+    topRated: [...PRODUCTS].sort((a, b) => b.rating - a.rating).slice(0, 4),
+    seasonal: PRODUCTS.filter((p) => p.tags.includes("seasonal")),
+    nearby: PRODUCTS.filter((p) => ["Nashik", "Pune", "Kolhapur"].includes(p.district)).slice(0, 4),
+  };
+
   return (
-    <div className="min-h-screen bg-surface text-ink">
+    <div className="min-h-screen bg-surface pb-24 text-ink lg:pb-0">
       <SiteNav />
+      <MarketplaceHeader
+        query={query}
+        onQueryChange={setQuery}
+        category={category}
+        onCategoryChange={setCategory}
+        district={district}
+        onDistrictChange={setDistrict}
+        village={village}
+        onVillageChange={setVillage}
+        sort={sort}
+        onSortChange={setSort}
+        productCount={filtered.length}
+        wishlistCount={wishlist.size}
+        cartCount={cart.size}
+        onOpenFilters={() => setFiltersOpen(true)}
+      />
 
-      {/* Hero */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-accent/50 via-surface to-surface py-20 lg:py-28">
-        <div className="pointer-events-none absolute -right-24 -top-24 size-96 rounded-full bg-brand/10 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-32 -left-24 size-96 rounded-full bg-brand-accent/15 blur-3xl" />
-
-        <div className="relative mx-auto max-w-7xl px-6">
-          <div className="grid items-center gap-12 lg:grid-cols-2">
-            <div className="animate-fade-in">
-              <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-brand/15 bg-brand/5 px-3 py-1 text-xs font-medium text-brand">
-                <span className="size-1.5 rounded-full bg-brand" />
-                Rural marketplace · Live in your district
-              </span>
-              <h1 className="mb-5 text-balance text-4xl font-semibold leading-[1.05] tracking-tight text-ink sm:text-5xl lg:text-6xl">
-                Everything Your Farm Needs, <span className="text-brand">All in One Place.</span>
-              </h1>
-              <p className="mb-8 max-w-[54ch] text-pretty text-base text-ink-muted sm:text-lg">
-                Buy animal feed, seeds, fertilizers, farm produce and agricultural essentials
-                directly from trusted local sellers.
-              </p>
-
-              <div className="mb-8 flex flex-wrap items-center gap-3">
-                <a
-                  href="#featured"
-                  className="inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-medium text-brand-foreground shadow-sm ring-1 ring-brand transition-all hover:bg-brand-light hover:shadow-md"
-                >
-                  Explore Marketplace
-                  <ArrowRight className="size-4" />
-                </a>
-                <Link
-                  to="/auth"
-                  search={{ mode: "signup" }}
-                  className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-surface px-6 py-3 text-sm font-medium text-ink transition-colors hover:border-brand/30 hover:text-brand dark:border-white/15 dark:bg-white/5 dark:text-foreground"
-                >
-                  Become a Seller
-                </Link>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-6 text-xs text-ink-muted">
-                <StatBadge value="500+" label="Villages Served" />
-                <StatBadge value="1,200+" label="Local Sellers" />
-                <StatBadge value="4.8★" label="Customer Rating" />
-              </div>
-            </div>
-
-            <div className="relative animate-fade-in">
-              <div className="relative overflow-hidden rounded-3xl bg-zinc-100 shadow-[0_30px_80px_-30px_rgba(26,77,46,0.35)] ring-1 ring-black/5 dark:bg-white/5 dark:ring-white/10">
-                <img
-                  src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1200&auto=format&fit=crop&q=70"
-                  alt="Rural farmer holding fresh farm produce"
-                  className="aspect-[4/5] w-full object-cover"
-                />
-              </div>
-              <div className="absolute -bottom-6 -left-6 hidden rounded-2xl bg-surface p-4 shadow-xl ring-1 ring-black/5 sm:flex sm:items-center sm:gap-3 dark:bg-card dark:ring-white/10">
-                <div className="grid size-10 place-items-center rounded-xl bg-brand/10 text-brand">
-                  <Truck className="size-5" strokeWidth={1.75} />
-                </div>
-                <div>
-                  <p className="text-xs font-medium text-ink">Same-day delivery</p>
-                  <p className="text-[11px] text-ink-muted">Across 500+ villages</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Categories */}
-      <section id="categories" className="bg-surface py-20">
-        <div className="mx-auto max-w-7xl px-6">
-          <SectionHeading
-            eyebrow="Categories"
-            title="Shop by category"
-            subtitle="From feed sacks to fresh produce — everything a rural household needs."
-          />
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7">
+      {/* Hero strip */}
+      <section className="border-b border-black/5 bg-gradient-to-b from-accent/50 to-surface py-10 dark:border-white/10">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
             {CATEGORIES.map((c) => (
-              <a
+              <button
                 key={c.id}
-                href={`#featured`}
-                className={`group relative flex flex-col items-center gap-3 overflow-hidden rounded-2xl bg-gradient-to-br ${c.accent} p-5 ring-1 ring-black/5 transition-all hover:-translate-y-1 hover:shadow-lg dark:bg-card dark:from-transparent dark:to-transparent dark:ring-white/10`}
+                onClick={() => setCategory(c.id)}
+                className={`group flex flex-col items-center gap-2 rounded-2xl bg-surface p-3 ring-1 ring-black/5 transition-all hover:-translate-y-0.5 hover:shadow-md hover:ring-brand/25 dark:bg-card dark:ring-white/10 ${
+                  category === c.id ? "ring-2 ring-brand" : ""
+                }`}
               >
-                <div className="grid size-12 place-items-center rounded-xl bg-surface text-brand shadow-sm ring-1 ring-black/5 transition-transform group-hover:scale-110 dark:bg-background dark:ring-white/10">
-                  <c.icon className="size-6" strokeWidth={1.75} />
+                <div className="relative size-14 overflow-hidden rounded-full">
+                  <img src={c.image} alt="" className="h-full w-full object-cover transition-transform group-hover:scale-110" />
                 </div>
-                <div className="text-center">
-                  <p className="text-sm font-semibold text-ink">{c.name}</p>
-                  <p className="text-[11px] text-ink-muted">{c.count} items</p>
-                </div>
-              </a>
+                <span className="text-center text-[11px] font-semibold leading-tight text-ink">{c.name}</span>
+              </button>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Featured Products */}
-      <section id="featured" className="bg-accent/30 py-20 dark:bg-white/[0.02]">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="mb-12 flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <span className="mb-2 inline-block text-xs font-medium uppercase tracking-wider text-brand">
-                Featured
-              </span>
-              <h2 className="text-balance text-3xl font-semibold text-ink sm:text-4xl">
-                Handpicked from local sellers
+      {/* Main grid */}
+      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+        <div className="grid gap-6 lg:grid-cols-[260px_1fr]">
+          <div className="hidden lg:block">
+            <div className="sticky top-[168px]">
+              <FiltersSidebar
+                filters={filters}
+                onChange={setFilters}
+                onReset={() => setFilters(DEFAULT_FILTERS)}
+              />
+            </div>
+          </div>
+
+          <div className="min-w-0">
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+              <h2 className="text-lg font-semibold text-ink">
+                {filtered.length} {filtered.length === 1 ? "product" : "products"}
+                {district !== "all" && (
+                  <span className="ml-2 text-sm font-normal text-ink-muted">
+                    in {village !== "all" ? village + ", " : ""}
+                    {district}
+                  </span>
+                )}
               </h2>
             </div>
-            <a
-              href="#categories"
-              className="inline-flex items-center gap-1 text-sm font-medium text-brand hover:text-brand-light"
-            >
-              View all products <ArrowRight className="size-4" />
-            </a>
-          </div>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {FEATURED_PRODUCTS.map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* Why GramSetu */}
-      <section className="bg-surface py-20">
-        <div className="mx-auto max-w-7xl px-6">
-          <SectionHeading
-            eyebrow="Why GramSetu"
-            title="Built on rural trust, powered by technology"
-            subtitle="Four reasons households, farmers and shops rely on GramSetu every day."
-          />
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {whyCards.map((w) => (
-              <div
-                key={w.title}
-                className="group relative overflow-hidden rounded-2xl bg-surface p-6 ring-1 ring-black/5 transition-all hover:-translate-y-1 hover:shadow-lg hover:ring-brand/25 dark:bg-card dark:ring-white/10"
-              >
-                <div className="mb-5 grid size-12 place-items-center rounded-xl bg-brand/10 text-brand transition-colors group-hover:bg-brand group-hover:text-brand-foreground">
-                  <w.icon className="size-6" strokeWidth={1.75} />
-                </div>
-                <h3 className="mb-2 text-lg font-semibold text-ink">{w.title}</h3>
-                <p className="text-sm leading-relaxed text-ink-muted">{w.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* How it works */}
-      <section className="bg-accent/30 py-20 dark:bg-white/[0.02]">
-        <div className="mx-auto max-w-7xl px-6">
-          <SectionHeading
-            eyebrow="How it works"
-            title="From click to doorstep in four simple steps"
-            subtitle="A transparent flow that keeps every side of the supply chain in sync."
-          />
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {howSteps.map((s, i) => (
-              <div key={s.n} className="relative">
-                <div className="h-full rounded-2xl bg-surface p-6 ring-1 ring-black/5 dark:bg-card dark:ring-white/10">
-                  <div className="mb-4 flex items-center gap-3">
-                    <div className="grid size-10 place-items-center rounded-xl bg-brand text-brand-foreground">
-                      <s.icon className="size-5" strokeWidth={1.75} />
-                    </div>
-                    <span className="tabular-nums text-3xl font-semibold text-brand/25">
-                      0{s.n}
-                    </span>
-                  </div>
-                  <h4 className="mb-2 text-base font-semibold text-ink">{s.title}</h4>
-                  <p className="text-sm leading-relaxed text-ink-muted">{s.body}</p>
-                </div>
-                {i < howSteps.length - 1 && (
-                  <ArrowRight className="absolute -right-4 top-1/2 hidden size-6 -translate-y-1/2 text-brand/30 lg:block" />
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="bg-surface py-20">
-        <div className="mx-auto max-w-7xl px-6">
-          <SectionHeading
-            eyebrow="Customer stories"
-            title="Trusted by villages across India"
-          />
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-            {TESTIMONIALS.map((t) => (
-              <figure
-                key={t.id}
-                className="flex flex-col gap-6 rounded-2xl bg-surface p-8 ring-1 ring-black/5 transition-shadow hover:shadow-lg dark:bg-card dark:ring-white/10"
-              >
-                <div className="flex gap-0.5">
-                  {Array.from({ length: t.rating }).map((_, i) => (
-                    <Star key={i} className="size-4 fill-brand-accent text-brand-accent" strokeWidth={0} />
-                  ))}
-                </div>
-                <blockquote className="text-pretty text-sm leading-relaxed text-ink/90">
-                  "{t.quote}"
-                </blockquote>
-                <figcaption className="flex items-center gap-3 border-t border-black/5 pt-5 dark:border-white/10">
-                  <img
-                    src={t.avatar}
-                    alt={t.name}
-                    className="size-11 rounded-full object-cover ring-2 ring-brand/20"
+            {filtered.length === 0 ? (
+              <EmptyState onClear={clearAll} onBrowseAll={clearAll} />
+            ) : (
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                {filtered.map((p) => (
+                  <ProductCard
+                    key={p.id}
+                    product={p}
+                    onQuickView={setQuickView}
+                    onToggleWishlist={toggleWishlist}
+                    wishlisted={wishlist.has(p.id)}
                   />
-                  <div>
-                    <p className="text-sm font-semibold text-ink">{t.name}</p>
-                    <p className="text-xs text-ink-muted">
-                      {t.role} · {t.village}
-                    </p>
-                  </div>
-                </figcaption>
-              </figure>
-            ))}
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* Featured sections */}
+      <ProductRow title="Trending Products" eyebrow="Trending now" products={bySection.trending} onQuickView={setQuickView} onToggleWishlist={toggleWishlist} wishlist={wishlist} />
+      <ProductRow title="Best Sellers" eyebrow="Loved by villages" products={bySection.bestSellers} onQuickView={setQuickView} onToggleWishlist={toggleWishlist} wishlist={wishlist} muted />
+      <ProductRow title="Recently Added" eyebrow="Just in" products={bySection.recentlyAdded} onQuickView={setQuickView} onToggleWishlist={toggleWishlist} wishlist={wishlist} />
+      <ProductRow title="Top Rated" eyebrow="4.5★ and above" products={bySection.topRated} onQuickView={setQuickView} onToggleWishlist={toggleWishlist} wishlist={wishlist} muted />
+      <ProductRow title="Seasonal Recommendations" eyebrow="Right for this season" products={bySection.seasonal} onQuickView={setQuickView} onToggleWishlist={toggleWishlist} wishlist={wishlist} />
+      <ProductRow title="Nearby Sellers" eyebrow="Close to you" products={bySection.nearby} onQuickView={setQuickView} onToggleWishlist={toggleWishlist} wishlist={wishlist} muted />
+
+      {/* Featured Sellers */}
+      <section className="bg-surface py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <div className="mb-8">
+            <span className="mb-2 inline-block text-xs font-medium uppercase tracking-wider text-brand">Featured sellers</span>
+            <h2 className="text-2xl font-semibold text-ink sm:text-3xl">Trusted farmers & village shops</h2>
+          </div>
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {SELLERS.map((s) => <SellerCard key={s.id} seller={s} />)}
           </div>
         </div>
       </section>
 
       <SiteFooter />
+
+      {/* Mobile filters drawer */}
+      <Sheet open={filtersOpen} onOpenChange={setFiltersOpen}>
+        <SheetContent side="left" className="w-[92vw] max-w-sm overflow-y-auto p-4">
+          <SheetHeader className="mb-3">
+            <SheetTitle>Filters</SheetTitle>
+          </SheetHeader>
+          <FiltersSidebar
+            filters={filters}
+            onChange={setFilters}
+            onReset={() => setFilters(DEFAULT_FILTERS)}
+          />
+        </SheetContent>
+      </Sheet>
+
+      {/* Mobile sticky bottom bar */}
+      <div className="fixed inset-x-0 bottom-0 z-50 border-t border-black/5 bg-surface/95 p-3 backdrop-blur-md lg:hidden dark:border-white/10 dark:bg-background/95">
+        <button className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand py-3 text-sm font-semibold text-brand-foreground shadow-md">
+          <ShoppingCart className="size-4" /> View Cart ({cart.size})
+        </button>
+      </div>
+
+      <QuickViewModal
+        product={quickView}
+        onClose={() => setQuickView(null)}
+        onToggleWishlist={toggleWishlist}
+        wishlisted={quickView ? wishlist.has(quickView.id) : false}
+      />
     </div>
   );
 }
 
-function SectionHeading({
-  eyebrow,
+function ProductRow({
   title,
-  subtitle,
+  eyebrow,
+  products,
+  onQuickView,
+  onToggleWishlist,
+  wishlist,
+  muted,
 }: {
-  eyebrow: string;
   title: string;
-  subtitle?: string;
+  eyebrow: string;
+  products: Product[];
+  onQuickView: (p: Product) => void;
+  onToggleWishlist: (p: Product) => void;
+  wishlist: Set<string>;
+  muted?: boolean;
 }) {
+  if (!products.length) return null;
   return (
-    <div className="mb-12 max-w-2xl">
-      <span className="mb-2 inline-block text-xs font-medium uppercase tracking-wider text-brand">
-        {eyebrow}
-      </span>
-      <h2 className="text-balance text-3xl font-semibold text-ink sm:text-4xl">{title}</h2>
-      {subtitle && <p className="mt-3 text-pretty text-base text-ink-muted">{subtitle}</p>}
-    </div>
-  );
-}
-
-function StatBadge({ value, label }: { value: string; label: string }) {
-  return (
-    <div className="flex items-center gap-2">
-      <span className="text-lg font-semibold text-ink">{value}</span>
-      <span className="text-ink-muted">{label}</span>
-    </div>
+    <section className={`py-14 ${muted ? "bg-accent/30 dark:bg-white/[0.02]" : "bg-surface"}`}>
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <span className="mb-1 inline-block text-xs font-medium uppercase tracking-wider text-brand">
+              {eyebrow}
+            </span>
+            <h2 className="text-2xl font-semibold text-ink sm:text-3xl">{title}</h2>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {products.slice(0, 4).map((p) => (
+            <ProductCard
+              key={p.id}
+              product={p}
+              onQuickView={onQuickView}
+              onToggleWishlist={onToggleWishlist}
+              wishlisted={wishlist.has(p.id)}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
