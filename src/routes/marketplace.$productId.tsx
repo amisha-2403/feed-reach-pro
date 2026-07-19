@@ -101,7 +101,7 @@ const ADDRESSES = [
 ];
 
 function ProductDetailsPage() {
-  const { product } = Route.useLoaderData();
+  const { product } = Route.useLoaderData() as { product: Product };
   const seller = SELLERS.find((s) => s.id === product.sellerId);
   const category = CATEGORY_LOOKUP[product.category];
 
