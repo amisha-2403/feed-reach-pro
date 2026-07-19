@@ -1,4 +1,5 @@
 import { Star, Heart, Eye, ShoppingCart, MapPin, Truck, ShieldCheck } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import type { Product } from "@/lib/marketplace-data";
 import { CATEGORY_LOOKUP } from "@/lib/marketplace-data";
 
