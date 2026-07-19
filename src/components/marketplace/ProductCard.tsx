@@ -126,12 +126,13 @@ export function ProductCard({
             <ShoppingCart className="size-4" />
             {outOfStock ? "Notify Me" : "Add to Cart"}
           </button>
-          <button
-            onClick={() => onQuickView?.(product)}
-            className="rounded-full border border-black/10 px-3 text-xs font-medium text-ink transition-colors hover:border-brand/40 hover:text-brand dark:border-white/15 dark:text-foreground"
+          <Link
+            to="/marketplace/$productId"
+            params={{ productId: product.id }}
+            className="grid place-items-center rounded-full border border-black/10 px-3 text-xs font-medium text-ink transition-colors hover:border-brand/40 hover:text-brand dark:border-white/15 dark:text-foreground"
           >
             View
-          </button>
+          </Link>
         </div>
       </div>
     </article>
