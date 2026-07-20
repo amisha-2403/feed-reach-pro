@@ -1,5 +1,7 @@
 import { Link, useNavigate } from "@tanstack/react-router";
+import { ShoppingCart } from "lucide-react";
 import { useSession } from "@/hooks/use-session";
+import { useCartCount } from "@/hooks/use-cart";
 import { ROLE_DASHBOARDS, ROLE_LABELS } from "@/lib/roles";
 import { supabase } from "@/integrations/supabase/client";
 import { Logo } from "@/components/brand/Logo";
@@ -14,6 +16,7 @@ const navLinks = [
 
 export function SiteNav() {
   const { loading, user, role } = useSession();
+  const cartCount = useCartCount();
   const navigate = useNavigate();
   const dashboardPath = role ? ROLE_DASHBOARDS[role] : "/customer";
 
@@ -45,6 +48,18 @@ export function SiteNav() {
 
         </div>
         <div className="flex items-center gap-2">
+          <Link
+            to="/cart"
+            aria-label="Cart"
+            className="relative grid size-9 place-items-center rounded-full text-ink transition-colors hover:bg-brand/10 hover:text-brand dark:text-foreground"
+          >
+            <ShoppingCart className="size-4" />
+            {cartCount > 0 && (
+              <span className="absolute -right-0.5 -top-0.5 grid min-w-4 place-items-center rounded-full bg-brand-accent px-1 text-[10px] font-bold leading-4 text-brand-accent-foreground">
+                {cartCount}
+              </span>
+            )}
+          </Link>
           {loading ? (
             <div className="h-7 w-24 animate-pulse rounded-full bg-black/5 dark:bg-white/10" />
           ) : user ? (

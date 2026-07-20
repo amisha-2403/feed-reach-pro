@@ -235,9 +235,12 @@ function MarketplacePage() {
 
       {/* Mobile sticky bottom bar */}
       <div className="fixed inset-x-0 bottom-0 z-50 border-t border-black/5 bg-surface/95 p-3 backdrop-blur-md lg:hidden dark:border-white/10 dark:bg-background/95">
-        <button className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand py-3 text-sm font-semibold text-brand-foreground shadow-md">
+        <a
+          href="/cart"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand py-3 text-sm font-semibold text-brand-foreground shadow-md"
+        >
           <ShoppingCart className="size-4" /> View Cart ({cart.size})
-        </button>
+        </a>
       </div>
 
       <QuickViewModal
