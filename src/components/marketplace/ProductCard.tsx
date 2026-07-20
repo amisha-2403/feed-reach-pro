@@ -2,6 +2,7 @@ import { Star, Heart, Eye, ShoppingCart, MapPin, Truck, ShieldCheck } from "luci
 import { Link } from "@tanstack/react-router";
 import type { Product } from "@/lib/marketplace-data";
 import { CATEGORY_LOOKUP } from "@/lib/marketplace-data";
+import { cartStore } from "@/lib/cart-store";
 
 interface ProductCardProps {
   product: Product;
