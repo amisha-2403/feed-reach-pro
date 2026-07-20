@@ -122,6 +122,7 @@ export function ProductCard({
         <div className="mt-2 grid grid-cols-[1fr_auto] gap-2">
           <button
             disabled={outOfStock}
+            onClick={() => !outOfStock && cartStore.add(product.id)}
             className="inline-flex items-center justify-center gap-2 rounded-full bg-brand py-2.5 text-sm font-medium text-brand-foreground shadow-sm transition-all hover:bg-brand-light hover:shadow-md disabled:cursor-not-allowed disabled:bg-ink-muted/40 disabled:text-white"
           >
             <ShoppingCart className="size-4" />
