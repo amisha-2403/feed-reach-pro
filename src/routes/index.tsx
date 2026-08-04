@@ -40,11 +40,11 @@ export const Route = createFileRoute("/")({
         content:
           "GramSetu connects villages through agriculture. Buy animal feed, seeds, fertilizers and farm produce directly from trusted farmers and local shops with same-day rural delivery.",
       },
-      { property: "og:title", content: "GramSetu — Connecting Villages Through Agriculture" },
+      { property: "og:title", content: "GramSetu — Village to Village, Hand to Hand" },
       {
         property: "og:description",
         content:
-          "Hyperlocal AgriTech marketplace linking farmers, shops, delivery partners and rural households across India.",
+          "GramSetu connects villages through agriculture. Buy animal feed, seeds, fertilizers and farm produce directly from trusted farmers and local shops with same-day rural delivery.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

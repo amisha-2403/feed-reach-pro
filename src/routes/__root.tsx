@@ -93,10 +93,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: SITE_TITLE },
       { name: "twitter:description", content: SITE_DESCRIPTION },
+      { title: "GramSetu — Village to Village, Hand to Hand" },
+      { property: "og:title", content: "GramSetu — Village to Village, Hand to Hand" },
+      { name: "twitter:title", content: "GramSetu — Village to Village, Hand to Hand" },
+      { name: "description", content: "GramSetu connects villages through agriculture. Buy animal feed, seeds, fertilizers and farm produce directly from trusted farmers and local shops with same-day rural delivery." },
+      { property: "og:description", content: "GramSetu connects villages through agriculture. Buy animal feed, seeds, fertilizers and farm produce directly from trusted farmers and local shops with same-day rural delivery." },
+      { name: "twitter:description", content: "GramSetu connects villages through agriculture. Buy animal feed, seeds, fertilizers and farm produce directly from trusted farmers and local shops with same-day rural delivery." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/a31323aa-b337-44b6-8345-517a10ef7c11/id-preview-8cfe2910--bc116421-003f-4204-a56e-17f756c345c9.lovable.app-1785817019006.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/a31323aa-b337-44b6-8345-517a10ef7c11/id-preview-8cfe2910--bc116421-003f-4204-a56e-17f756c345c9.lovable.app-1785817019006.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
