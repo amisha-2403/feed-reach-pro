@@ -1,0 +1,135 @@
+{
+  "version": 1,
+  "sdk_version": "0.26.1",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://txqxagbqtumiueoluhyo.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "feedconnect-local-feed-solutions",
+      "version": "0.1.0",
+      "title": "FeedConnect: Local Feed Solutions"
+    },
+    "tools": [
+      {
+        "name": "search_products",
+        "title": "Search marketplace products",
+        "description": "Search the GramSetu agri-marketplace catalog by keyword, category, district, seller type, or price range.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "query": {
+              "description": "Free-text search over product name, brand, and description.",
+              "type": "string"
+            },
+            "category": {
+              "description": "Category id or name, e.g. 'animal-feed' or 'Seeds'.",
+              "type": "string"
+            },
+            "district": {
+              "description": "District to filter sellers by.",
+              "type": "string"
+            },
+            "sellerType": {
+              "type": "string",
+              "enum": [
+                "Shop",
+                "Farmer",
+                "Cooperative"
+              ]
+            },
+            "maxPrice": {
+              "description": "Maximum price in INR.",
+              "type": "number"
+            },
+            "limit": {
+              "description": "Max results to return (default 10).",
+              "type": "number"
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_product",
+        "title": "Get product details",
+        "description": "Fetch full details for one GramSetu marketplace product, including specs and seller info.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "productId": {
+              "type": "string",
+              "description": "Product id, e.g. 'p1'."
+            }
+          },
+          "required": [
+            "productId"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_sellers",
+        "title": "List marketplace sellers",
+        "description": "List verified shops, farmers, and cooperatives selling on GramSetu, optionally filtered.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "district": {
+              "description": "District to filter by.",
+              "type": "string"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "Shop",
+                "Farmer",
+                "Cooperative"
+              ]
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_my_profile",
+        "title": "Get my GramSetu profile",
+        "description": "Return the signed-in GramSetu user's profile and role (customer, farmer, shop, delivery, admin).",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
