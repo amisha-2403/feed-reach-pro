@@ -1,13 +1,12 @@
-import { useMemo, useEffect, useState } from "react";
+import { useMemo } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, ShoppingCart } from "lucide-react";
 
 import { SiteNav } from "@/components/site/SiteNav";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { useCart } from "@/hooks/use-cart";
-import { useEffect, useState as useReactState } from "react";
 import { computeTotals, getCartLines } from "@/lib/cart-store";
-import { loadProductsFromSupabase, getProductById } from "@/hooks/use-cart";
+import { PRODUCTS } from "@/lib/marketplace-data";
 import {
   CartItemRow,
   CartSummary,
@@ -38,37 +37,26 @@ export const Route = createFileRoute("/cart")({
 
 function CartPage() {
   const state = useCart();
-  const [products, setProducts] = useState<Product[]>([]);
-  const [supabaseLoaded, setSupabaseLoaded] = useState(false);
-
-  useEffect(() => {
-    loadProductsFromSupabase().then(({ products: fetchedProducts }) => {
-      setProducts(fetchedProducts);
-      setSupabaseLoaded(true);
-    });
-  }, []);
-
-  const actualProducts = supabaseLoaded ? products : [];
-
   const lines = getCartLines(state.items);
   const totals = computeTotals(state);
   const isEmpty = lines.length === 0;
 
   const rows = useMemo(() => {
     const inCartIds = new Set(state.items.map((i) => i.productId));
-    const nearestId = state.items[0]?.productId;
-    const nearest = actualProducts.find((p) => p.id === nearestId);
-    const nearestProduct = nearest || getProductById(nearestId);
+    const nearest = state.items[0]
+      ? PRODUCTS.find((p) => p.id === state.items[0].productId)
+      : null;
 
-    const fbt = actualProducts.filter((p) =>
-      nearestProduct ? p.category === nearestProduct.category && p.id !== nearestProduct.id : false,
+    const fbt = PRODUCTS.filter((p) =>
+      nearest ? p.category === nearest.category && p.id !== nearest.id : false,
     ).slice(0, 4);
-    const recommended = actualProducts.filter((p) => p.tags.includes("best-seller") && !inCartIds.has(p.id)).slice(0, 4);
-    const recentlyViewed = actualProducts.length > 0 ? [...actualProducts].reverse().slice(0, 4) : [];
-    const trending = actualProducts.filter((p) =>
-      p.tags.includes("trending") &&
-      !inCartIds.has(p.id) &&
-      (nearestProduct ? p.district === nearestProduct.district : true),
+    const recommended = PRODUCTS.filter((p) => p.tags.includes("best-seller") && !inCartIds.has(p.id)).slice(0, 4);
+    const recentlyViewed = [...PRODUCTS].reverse().slice(0, 4);
+    const trending = PRODUCTS.filter(
+      (p) =>
+        p.tags.includes("trending") &&
+        !inCartIds.has(p.id) &&
+        (nearest ? p.district === nearest.district : true),
     ).slice(0, 4);
     return { fbt, recommended, recentlyViewed, trending };
   }, [state.items]);
@@ -112,11 +100,11 @@ function CartPage() {
         {isEmpty ? (
           <>
             <EmptyCart />
-<RecommendedRow
-  title="Trending near your village"
-  eyebrow="Popular right now"
-  products={actualProducts.filter((p) => p.tags.includes("trending"))}
-/>
+            <RecommendedRow
+              title="Trending near your village"
+              eyebrow="Popular right now"
+              products={PRODUCTS.filter((p) => p.tags.includes("trending"))}
+            />
           </>
         ) : (
           <>

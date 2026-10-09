@@ -1,6 +1,5 @@
 import type { Product } from "./marketplace-data";
-import { supabase } from "@/integrations/supabase/client";
-import { useEffect, useState } from "react";
+import { PRODUCTS } from "./marketplace-data";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -19,12 +18,58 @@ export interface CartState {
   deliveryType: "standard" | "express";
 }
 
+export interface Coupon {
+  code: string;
+  label: string;
+  description: string;
+  /** flat OR percent */
+  kind: "flat" | "percent";
+  value: number;
+  minSubtotal?: number;
+  maxDiscount?: number;
+}
+
+export const COUPONS: Coupon[] = [
+  {
+    code: "WELCOME100",
+    label: "New here? ₹100 off",
+    description: "Flat ₹100 off on orders above ₹499",
+    kind: "flat",
+    value: 100,
+    minSubtotal: 499,
+  },
+  {
+    code: "GRAMSETU50",
+    label: "GramSetu community ₹50",
+    description: "Flat ₹50 off on any order",
+    kind: "flat",
+    value: 50,
+  },
+  {
+    code: "SAVE10",
+    label: "Save 10%",
+    description: "10% off on orders above ₹999 · max ₹250",
+    kind: "percent",
+    value: 10,
+    minSubtotal: 999,
+    maxDiscount: 250,
+  },
+  {
+    code: "FIRSTORDER",
+    label: "First-order 15%",
+    description: "15% off on orders above ₹799 · max ₹400",
+    kind: "percent",
+    value: 15,
+    minSubtotal: 799,
+    maxDiscount: 400,
+  },
+];
+
 /* ------------------------------------------------------------------ */
 /*  Store                                                              */
 /* ------------------------------------------------------------------ */
 
-const STORAGE_KEY = "gramsetu.cart.v1";
-
+const KEY = "gramsetu.cart.v1";
 type Listener = (s: CartState) => void;
 
 function initialState(): CartState {
@@ -34,98 +79,47 @@ function initialState(): CartState {
 class CartStore {
   private state: CartState = initialState();
   private listeners = new Set<Listener>();
-  private initialized = false;
+  private hydrated = false;
 
-  private async initialize() {
-    if (this.initialized || typeof window === "undefined") return;
-    this.initialized = true;
-
-    // First, try to hydrate from localStorage
+  private hydrate() {
+    if (this.hydrated || typeof window === "undefined") return;
+    this.hydrated = true;
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) this.state = JSON.parse(raw);
+      const raw = window.localStorage.getItem(KEY);
+      if (raw) this.state = { ...initialState(), ...JSON.parse(raw) };
+      else {
+        // Seed with a couple realistic items so demo is compelling
+        this.state = {
+          ...initialState(),
+          items: [
+            { productId: "p1", qty: 2, addedAt: Date.now() },
+            { productId: "p3", qty: 1, addedAt: Date.now() },
+            { productId: "p5", qty: 3, addedAt: Date.now() },
+          ],
+        };
+      }
     } catch {
       this.state = initialState();
     }
-
-    // Then sync with Supabase if user is logged in
-    try {
-      const { data: { session} } = await supabase.auth.getSession();
-      if (session?.user) {
-        const { data, error } = await supabase
-          .from("cart_items")
-          .select("*")
-          .eq("user_id", session.user.id);
-
-        if (error) {
-          console.error("Error fetching cart from Supabase:", error);
-          return;
-        }
-
-        if (data && data.length > 0) {
-          // Merge Supabase cart with localStorage, giving priority to Supabase
-          const supabaseItems = data
-            .filter((item: any) => item.qty > 0)
-            .map((item: any) => ({
-              productId: item.product_id,
-              qty: item.qty,
-              addedAt: item.added_at?.toDate().getTime() || Date.now(),
-            }));
-
-          const supabaseSaved = data
-            .filter((item: any) => item.saved && item.saved === true)
-            .map((item: any) => ({
-              productId: item.product_id,
-              qty: item.qty || 1,
-              addedAt: item.added_at?.toDate().getTime() || Date.now(),
-            }));
-
-          // Merge items: keep localStorage items, but update quantities from Supabase
-          const mergedItems = this.mergeCartItems(supabaseItems);
-          const mergedSaved = this.mergeCartItems(supabaseSaved, true);
-
-          this.state = {
-            items: mergedItems,
-            saved: mergedSaved,
-            couponCode: data[0]?.coupon_code || this.state.couponCode,
-            deliveryType: data[0]?.delivery_type || this.state.deliveryType,
-          };
+    window.addEventListener("storage", (e) => {
+      if (e.key === KEY && e.newValue) {
+        try {
+          this.state = { ...initialState(), ...JSON.parse(e.newValue) };
+          this.emit();
+        } catch {
+          /* noop */
         }
       }
-    } catch (e) {
-      console.error("Cart Supabase sync error:", e);
-    }
-
-    this.emit();
+    });
   }
 
-  private mergeCartItems(items: any[], isSaved = false) {
-    const result: any[] = [];
-    const existingIds = new Set(
-      this.state.items.map((i: any) => i.productId)
-    );
-
-    for (const item of items) {
-      if (existingIds.has(item.productId)) {
-        // Update existing item quantity
-        const existing = this.state.items.find((i: any) => i.productId === item.productId);
-        if (existing) {
-          result.push({
-            productId: item.productId,
-            qty: item.qty,
-            addedAt: item.addedAt || existing.addedAt,
-          });
-        }
-      } else {
-        // Add new item
-        result.push({
-          productId: item.productId,
-          qty: item.qty,
-          addedAt: item.addedAt || Date.now(),
-        });
-      }
+  private persist() {
+    if (typeof window === "undefined") return;
+    try {
+      window.localStorage.setItem(KEY, JSON.stringify(this.state));
+    } catch {
+      /* noop */
     }
-    return result;
   }
 
   private emit() {
@@ -134,18 +128,23 @@ class CartStore {
 
   private set(next: Partial<CartState>) {
     this.state = { ...this.state, ...next };
-    this.persistToLocalStorage();
+    this.persist();
     this.emit();
   }
 
-  async subscribe(l: Listener): () => void {
-    await this.initialize();
+  getState(): CartState {
+    this.hydrate();
+    return this.state;
+  }
+
+  subscribe(l: Listener): () => void {
+    this.hydrate();
     this.listeners.add(l);
     return () => this.listeners.delete(l);
   }
 
   add(productId: string, qty = 1) {
-    this.initialize();
+    this.hydrate();
     const existing = this.state.items.find((i) => i.productId === productId);
     const items = existing
       ? this.state.items.map((i) =>
@@ -198,10 +197,17 @@ class CartStore {
 
   applyCoupon(code: string): { ok: boolean; message: string } {
     const upper = code.trim().toUpperCase();
-    const validCoupons = ["WELCOME100", "GRAMSETU50", "SAVE10", "FIRSTORDER"];
-    if (!validCoupons.includes(upper)) return { ok: false, message: "Coupon code is not valid." };
-    this.set({ couponCode: upper });
-    return { ok: true, message: `${upper} applied` };
+    const coupon = COUPONS.find((c) => c.code === upper);
+    if (!coupon) return { ok: false, message: "Coupon code is not valid." };
+    const totals = computeTotals(this.state, coupon.code);
+    if (coupon.minSubtotal && totals.subtotal < coupon.minSubtotal) {
+      return {
+        ok: false,
+        message: `Add ₹${coupon.minSubtotal - totals.subtotal} more to use ${coupon.code}.`,
+      };
+    }
+    this.set({ couponCode: coupon.code });
+    return { ok: true, message: `${coupon.code} applied — you saved ₹${totals.couponDiscount}.` };
   }
 
   removeCoupon() {
@@ -210,29 +216,6 @@ class CartStore {
 
   setDeliveryType(type: "standard" | "express") {
     this.set({ deliveryType: type });
-  }
-
-  // Sync cart to Supabase (call after cart changes)
-  async syncToSupabase() {
-    const { data: { session} } = await supabase.auth.getSession();
-    if (session) {
-      try {
-        await supabase.from("cart_items").upsert({
-          user_id: session.user.id,
-          items: this.state.items.map((i: any) => ({
-            product_id: i.productId,
-            qty: i.qty,
-            saved: i.saved && i.saved.some((si: any) => si.productId === i.productId),
-            added_at: new Date(i.addedAt),
-          })),
-          coupon_code: this.state.couponCode,
-          delivery_type: this.state.deliveryType,
-          updated_at: new Date(),
-        });
-      } catch (e) {
-        console.error("Error syncing cart to Supabase:", e);
-      }
-    }
   }
 
   clear() {
@@ -270,13 +253,6 @@ export function getCartLines(items: CartItem[]): CartLine[] {
   return lines;
 }
 
-// Need to import PRODUCTS - will be set by the hook
-let PRODUCTS: Product[] = [];
-
-export function setProducts(products: Product[]) {
-  PRODUCTS = products;
-}
-
 export interface Totals {
   itemsTotal: number; // sum of original prices
   subtotal: number; // sum of discounted prices
@@ -302,27 +278,17 @@ export function computeTotals(state: CartState, couponOverride?: string | null):
   const productDiscount = itemsTotal - subtotal;
 
   const code = couponOverride === undefined ? state.couponCode : couponOverride;
-  const coupon = code ? ["WELCOME100", "GRAMSETU50", "SAVE10", "FIRSTORDER"].find((c) => c === code) : null;
+  const coupon = code ? COUPONS.find((c) => c.code === code) : null;
 
   let couponDiscount = 0;
-  if (coupon) {
-    const couponDiscounts: Record<string, { kind: "flat" | "percent"; value: number; minSubtotal?: number; maxDiscount?: number }> = {
-      WELCOME100: { kind: "flat", value: 100, minSubtotal: 499 },
-      GRAMSETU50: { kind: "flat", value: 50 },
-      SAVE10: { kind: "percent", value: 10, minSubtotal: 999, maxDiscount: 250 },
-      FIRSTORDER: { kind: "percent", value: 15, minSubtotal: 799, maxDiscount: 400 },
-    };
-    const c = couponDiscounts[coupon];
-    if (c) {
-      if (c.kind === "flat") {
-        couponDiscount = c.value;
-      } else {
-        couponDiscount = Math.min(
-          c.maxDiscount ?? Number.POSITIVE_INFINITY,
-          Math.round((subtotal * c.value) / 100),
-        );
-      }
-    }
+  if (coupon && (!coupon.minSubtotal || subtotal >= coupon.minSubtotal)) {
+    couponDiscount =
+      coupon.kind === "flat"
+        ? coupon.value
+        : Math.min(
+            coupon.maxDiscount ?? Number.POSITIVE_INFINITY,
+            Math.round((subtotal * coupon.value) / 100),
+          );
     couponDiscount = Math.min(couponDiscount, subtotal);
   }
 

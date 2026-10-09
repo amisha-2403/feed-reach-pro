@@ -13,11 +13,11 @@ import { EmptyState } from "@/components/marketplace/EmptyState";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import {
   CATEGORIES,
+  PRODUCTS,
   SELLERS,
   type Product,
   type SortId,
 } from "@/lib/marketplace-data";
-import { fetchProducts, type ProductFilters } from "@/lib/supabase/products";
 
 export const Route = createFileRoute("/marketplace")({
   head: () => ({
@@ -50,17 +50,27 @@ function MarketplacePage() {
   const [cart, setCart] = useState<Set<string>>(new Set());
   const [quickView, setQuickView] = useState<Product | null>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [supabaseLoaded, setSupabaseLoaded] = useState(false);
 
-  useEffect(() => {
-    fetchProducts().then(({ products: fetchedProducts }) => {
-      setProducts(fetchedProducts);
-      setSupabaseLoaded(true);
+  const filtered = useMemo(() => {
+    let out = PRODUCTS.filter((p) => {
+      if (query && !`${p.name} ${p.brand ?? ""} ${p.seller}`.toLowerCase().includes(query.toLowerCase()))
+        return false;
+      if (category !== "all" && p.category !== category) return false;
+      if (district !== "all" && p.district !== district) return false;
+      if (village !== "all" && p.village !== village) return false;
+      if (filters.categories.length && !filters.categories.includes(p.category)) return false;
+      if (p.price < filters.priceRange[0] || p.price > filters.priceRange[1]) return false;
+      if (filters.sellerTypes.length && !filters.sellerTypes.includes(p.sellerType)) return false;
+      if (filters.availability.length && !filters.availability.includes(p.stock)) return false;
+      if (filters.minRating && p.rating < filters.minRating) return false;
+      if (filters.deliverySpeeds.length && !filters.deliverySpeeds.includes(p.deliverySpeed))
+        return false;
+      if (filters.villages.length && !filters.villages.includes(p.village)) return false;
+      if (filters.districts.length && !filters.districts.includes(p.district)) return false;
+      if (filters.verifiedOnly && !p.verified) return false;
+      if (filters.discountOnly && p.originalPrice <= p.price) return false;
+      return true;
     });
-  }, []);
-
-  const actualProducts = supabaseLoaded ? products : PRODUCTS;
 
     const disc = (p: Product) => (p.originalPrice - p.price) / p.originalPrice;
     switch (sort) {
@@ -91,12 +101,12 @@ function MarketplacePage() {
   };
 
   const bySection = {
-    trending: actualProducts.filter((p) => p.tags.includes("trending")),
-    bestSellers: actualProducts.filter((p) => p.tags.includes("best-seller")),
-    recentlyAdded: actualProducts.filter((p) => p.tags.includes("new")),
-    topRated: [...actualProducts].sort((a, b) => b.rating - a.rating).slice(0, 4),
-    seasonal: actualProducts.filter((p) => p.tags.includes("seasonal")),
-    nearby: actualProducts.filter((p) => ["Nashik", "Pune", "Kolhapur"].includes(p.district)).slice(0, 4),
+    trending: PRODUCTS.filter((p) => p.tags.includes("trending")),
+    bestSellers: PRODUCTS.filter((p) => p.tags.includes("best-seller")),
+    recentlyAdded: PRODUCTS.filter((p) => p.tags.includes("new")),
+    topRated: [...PRODUCTS].sort((a, b) => b.rating - a.rating).slice(0, 4),
+    seasonal: PRODUCTS.filter((p) => p.tags.includes("seasonal")),
+    nearby: PRODUCTS.filter((p) => ["Nashik", "Pune", "Kolhapur"].includes(p.district)).slice(0, 4),
   };
 
   return (

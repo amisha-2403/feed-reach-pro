@@ -28,8 +28,7 @@ import {
 
 import { SiteNav } from "@/components/site/SiteNav";
 import { SiteFooter } from "@/components/site/SiteFooter";
-import { useEffect, useState } from "react";
-import { loadProductsFromSupabase, getProductById } from "@/hooks/use-cart";
+import { ProductCard } from "@/components/marketplace/ProductCard";
 import { FEATURED_PRODUCTS } from "@/lib/marketplace-data";
 
 export const Route = createFileRoute("/")({
@@ -206,22 +205,12 @@ const stories = [
 ];
 
 function HomePage() {
-  const [featured, setFeatured] = useState<Product[]>(FEATURED_PRODUCTS);
-  const [supabaseLoaded, setSupabaseLoaded] = useState(false);
+  const featured = FEATURED_PRODUCTS.slice(0, 4).map((p, i) => ({
+    ...p,
+    stock: (["in-stock", "low-stock", "in-stock", "in-stock"] as const)[i],
+  }));
 
-  useEffect(() => {
-    loadProductsFromSupabase().then(({ products }) => {
-      if (products.length > 0) {
-        setFeatured(products.slice(0, 4));
-      }
-      setSupabaseLoaded(true);
-    });
-  }, []);
-
-  // Compute featured slice based on data source
-  const featured = supabaseLoaded
-    ? featured.slice(0, 4)
-    : FEATURED_PRODUCTS.slice(0, 4);
+  return (
     <div className="min-h-screen bg-surface text-ink">
       <SiteNav />
 
