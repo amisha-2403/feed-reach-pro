@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { ShoppingCart } from "lucide-react";
-import { useSession } from "@/hooks/use-session";
+import { ShoppingCart, Mail, Phone } from "lucide-react";
+import { useAuth } from "@/components/auth/UseAuth";
 import { useCartCount } from "@/hooks/use-cart";
 import { ROLE_DASHBOARDS, ROLE_LABELS } from "@/lib/roles";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,19 +11,14 @@ const navLinks = [
   { label: "Marketplace", to: "/marketplace" as const },
   { label: "Categories", to: "/marketplace" as const, hash: "categories" },
   { label: "Orders", to: "/marketplace" as const, hash: "featured" },
-  { label: "Wishlist", to: "/marketplace" as const, hash: "featured" },
+  { label: "About", to: "/about-us" as const },
 ];
 
 export function SiteNav() {
-  const { loading, user, role } = useSession();
+  const { user, isLoading } = useAuth();
   const cartCount = useCartCount();
   const navigate = useNavigate();
-  const dashboardPath = role ? ROLE_DASHBOARDS[role] : "/customer";
-
-  async function signOut() {
-    await supabase.auth.signOut();
-    navigate({ to: "/" });
-  }
+  const dashboardPath = user ? ROLE_DASHBOARDS[user.role] : "/customer";
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-black/5 bg-surface/80 backdrop-blur-md dark:border-white/10 dark:bg-background/70">
@@ -45,8 +40,8 @@ export function SiteNav() {
               </Link>
             ))}
           </div>
-
         </div>
+
         <div className="flex items-center gap-2">
           <Link
             to="/cart"
@@ -60,12 +55,13 @@ export function SiteNav() {
               </span>
             )}
           </Link>
-          {loading ? (
-            <div className="h-7 w-24 animate-pulse rounded-full bg-black/5 dark:bg-white/10" />
+
+          {isLoading ? (
+            <div className="hidden h-7 w-24 animate-pulse rounded-full bg-black/5 dark:bg-white/10" />
           ) : user ? (
             <>
               <span className="hidden text-xs font-medium text-ink-muted sm:inline">
-                {role ? ROLE_LABELS[role] : ""}
+                {user.role ? ROLE_LABELS[user.role] : ""}
               </span>
               <Link
                 to={dashboardPath}
@@ -74,24 +70,30 @@ export function SiteNav() {
                 Dashboard
               </Link>
               <button
-                onClick={signOut}
+                onClick={() => {}}
                 className="rounded-full bg-brand px-4 py-1.5 text-sm font-medium text-brand-foreground ring-1 ring-brand transition-transform hover:scale-[1.02] hover:bg-brand-light"
+                aria-label="Account"
               >
-                Sign out
+                {/* User initials or avatar */}
+                {user.name ? user.name.split(" ").map((n) => n[0]).join("") : "U"}
               </button>
+              {/* Cart count badge */}
+              {cartCount > 0 && (
+                <span className="absolute -right-0.5 -top-0.5 grid min-w-4 place-items-center rounded-full bg-brand-accent px-1 text-[10px] font-bold leading-4 text-brand-accent-foreground">
+                  {cartCount}
+                </span>
+              )}
             </>
           ) : (
             <>
               <Link
-                to="/auth"
-                search={{ mode: "signin" }}
+                to="/login"
                 className="rounded-md px-3 py-1.5 text-sm font-medium text-ink/80 transition-colors hover:text-brand dark:text-foreground/80"
               >
                 Sign in
               </Link>
               <Link
-                to="/auth"
-                search={{ mode: "signup" }}
+                to="/register"
                 className="rounded-full bg-brand px-4 py-1.5 text-sm font-medium text-brand-foreground ring-1 ring-brand transition-transform hover:scale-[1.02] hover:bg-brand-light"
               >
                 Get started
