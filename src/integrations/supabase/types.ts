@@ -10,10 +10,246 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.5"
+    PostgrestVersion: "14.18"
   }
   public: {
     Tables: {
+      cart_items: {
+        Row: {
+          added_at: string
+          coupon_code: string | null
+          delivery_type: string
+          id: string
+          product_id: string
+          qty: number
+          saved: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          added_at?: string
+          coupon_code?: string | null
+          delivery_type?: string
+          id?: string
+          product_id: string
+          qty?: number
+          saved?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          added_at?: string
+          coupon_code?: string | null
+          delivery_type?: string
+          id?: string
+          product_id?: string
+          qty?: number
+          saved?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cart_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      order_items: {
+        Row: {
+          created_at: string
+          discount_at_purchase: number
+          id: string
+          order_id: string
+          original_price_at_purchase: number
+          price_at_purchase: number
+          product_id: string | null
+          quantity: number
+        }
+        Insert: {
+          created_at?: string
+          discount_at_purchase?: number
+          id?: string
+          order_id: string
+          original_price_at_purchase: number
+          price_at_purchase: number
+          product_id?: string | null
+          quantity?: number
+        }
+        Update: {
+          created_at?: string
+          discount_at_purchase?: number
+          id?: string
+          order_id?: string
+          original_price_at_purchase?: number
+          price_at_purchase?: number
+          product_id?: string | null
+          quantity?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          contact_name: string | null
+          contact_phone: string | null
+          created_at: string
+          delivery_address: string | null
+          delivery_fee: number
+          delivery_type: string
+          discount_amount: number
+          district: string | null
+          gst: number
+          id: string
+          notes: string | null
+          payment_method: string | null
+          status: Database["public"]["Enums"]["order_status"]
+          subtotal: number
+          total_amount: number
+          updated_at: string
+          user_id: string
+          village: string | null
+        }
+        Insert: {
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          delivery_address?: string | null
+          delivery_fee?: number
+          delivery_type?: string
+          discount_amount?: number
+          district?: string | null
+          gst?: number
+          id?: string
+          notes?: string | null
+          payment_method?: string | null
+          status?: Database["public"]["Enums"]["order_status"]
+          subtotal: number
+          total_amount: number
+          updated_at?: string
+          user_id: string
+          village?: string | null
+        }
+        Update: {
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          delivery_address?: string | null
+          delivery_fee?: number
+          delivery_type?: string
+          discount_amount?: number
+          district?: string | null
+          gst?: number
+          id?: string
+          notes?: string | null
+          payment_method?: string | null
+          status?: Database["public"]["Enums"]["order_status"]
+          subtotal?: number
+          total_amount?: number
+          updated_at?: string
+          user_id?: string
+          village?: string | null
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          brand: string | null
+          category: string
+          created_at: string
+          delivery_available: boolean
+          delivery_speed: Database["public"]["Enums"]["delivery_speed"]
+          description: string | null
+          district: string
+          gallery: string[]
+          id: string
+          image: string
+          name: string
+          original_price: number | null
+          price: number
+          rating: number
+          reviews: number
+          seller: string
+          seller_id: string
+          seller_type: Database["public"]["Enums"]["seller_kind"]
+          specs: Json
+          stock: Database["public"]["Enums"]["stock_status"]
+          tags: string[]
+          updated_at: string
+          verified: boolean
+          village: string
+        }
+        Insert: {
+          brand?: string | null
+          category: string
+          created_at?: string
+          delivery_available?: boolean
+          delivery_speed?: Database["public"]["Enums"]["delivery_speed"]
+          description?: string | null
+          district: string
+          gallery?: string[]
+          id?: string
+          image: string
+          name: string
+          original_price?: number | null
+          price: number
+          rating?: number
+          reviews?: number
+          seller: string
+          seller_id: string
+          seller_type: Database["public"]["Enums"]["seller_kind"]
+          specs?: Json
+          stock?: Database["public"]["Enums"]["stock_status"]
+          tags?: string[]
+          updated_at?: string
+          verified?: boolean
+          village: string
+        }
+        Update: {
+          brand?: string | null
+          category?: string
+          created_at?: string
+          delivery_available?: boolean
+          delivery_speed?: Database["public"]["Enums"]["delivery_speed"]
+          description?: string | null
+          district?: string
+          gallery?: string[]
+          id?: string
+          image?: string
+          name?: string
+          original_price?: number | null
+          price?: number
+          rating?: number
+          reviews?: number
+          seller?: string
+          seller_id?: string
+          seller_type?: Database["public"]["Enums"]["seller_kind"]
+          specs?: Json
+          stock?: Database["public"]["Enums"]["stock_status"]
+          tags?: string[]
+          updated_at?: string
+          verified?: boolean
+          village?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -104,6 +340,16 @@ export type Database = {
     }
     Enums: {
       app_role: "customer" | "farmer" | "shopkeeper" | "delivery" | "admin"
+      delivery_speed: "same-day" | "next-day" | "2-3-days"
+      order_status:
+        | "pending"
+        | "confirmed"
+        | "processing"
+        | "shipped"
+        | "delivered"
+        | "cancelled"
+      seller_kind: "Shop" | "Farmer" | "Cooperative"
+      stock_status: "in-stock" | "low-stock" | "out-of-stock"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -119,12 +365,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -148,11 +394,11 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -173,11 +419,11 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -198,11 +444,11 @@ export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -215,11 +461,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -232,6 +478,17 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["customer", "farmer", "shopkeeper", "delivery", "admin"],
+      delivery_speed: ["same-day", "next-day", "2-3-days"],
+      order_status: [
+        "pending",
+        "confirmed",
+        "processing",
+        "shipped",
+        "delivered",
+        "cancelled",
+      ],
+      seller_kind: ["Shop", "Farmer", "Cooperative"],
+      stock_status: ["in-stock", "low-stock", "out-of-stock"],
     },
   },
 } as const
