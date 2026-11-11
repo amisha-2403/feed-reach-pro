@@ -1,9 +1,8 @@
-import { Link, useNavigate } from "@tanstack/react-router";
-import { ShoppingCart, Mail, Phone } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { ShoppingCart } from "lucide-react";
 import { useAuth } from "@/components/auth/UseAuth";
 import { useCartCount } from "@/hooks/use-cart";
 import { ROLE_DASHBOARDS, ROLE_LABELS } from "@/lib/roles";
-import { supabase } from "@/integrations/supabase/client";
 import { Logo } from "@/components/brand/Logo";
 
 const navLinks = [
@@ -17,7 +16,6 @@ const navLinks = [
 export function SiteNav() {
   const { user, isLoading } = useAuth();
   const cartCount = useCartCount();
-  const navigate = useNavigate();
   const dashboardPath = user ? ROLE_DASHBOARDS[user.role] : "/customer";
 
   return (
@@ -70,9 +68,9 @@ export function SiteNav() {
                 Dashboard
               </Link>
               <button
-                onClick={() => {}}
                 className="rounded-full bg-brand px-4 py-1.5 text-sm font-medium text-brand-foreground ring-1 ring-brand transition-transform hover:scale-[1.02] hover:bg-brand-light"
                 aria-label="Account"
+                title={user.name}
               >
                 {/* User initials or avatar */}
                 {user.name ? user.name.split(" ").map((n) => n[0]).join("") : "U"}
@@ -87,13 +85,15 @@ export function SiteNav() {
           ) : (
             <>
               <Link
-                to="/login"
+                to="/auth"
+                search={{ mode: "signin" }}
                 className="rounded-md px-3 py-1.5 text-sm font-medium text-ink/80 transition-colors hover:text-brand dark:text-foreground/80"
               >
                 Sign in
               </Link>
               <Link
-                to="/register"
+                to="/auth"
+                search={{ mode: "signup" }}
                 className="rounded-full bg-brand px-4 py-1.5 text-sm font-medium text-brand-foreground ring-1 ring-brand transition-transform hover:scale-[1.02] hover:bg-brand-light"
               >
                 Get started

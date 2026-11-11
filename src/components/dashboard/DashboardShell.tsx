@@ -2,8 +2,7 @@ import type { ReactNode } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { LogOut } from "lucide-react";
 
-import { supabase } from "@/integrations/supabase/client";
-import { useSession } from "@/hooks/use-session";
+import { useAuth } from "@/components/auth/UseAuth";
 import { ROLE_LABELS, type AppRole } from "@/lib/roles";
 import { Logo } from "@/components/brand/Logo";
 
@@ -19,10 +18,10 @@ export function DashboardShell({
   children: ReactNode;
 }) {
   const navigate = useNavigate();
-  const { fullName, user } = useSession();
+  const { user, logout } = useAuth();
 
   async function signOut() {
-    await supabase.auth.signOut();
+    await logout();
     navigate({ to: "/auth" });
   }
 
@@ -37,8 +36,8 @@ export function DashboardShell({
               {ROLE_LABELS[role]}
             </span>
             <div className="hidden text-right sm:block">
-              <div className="text-sm font-medium text-ink">{fullName ?? user?.email}</div>
-              {fullName ? <div className="text-xs text-ink-muted">{user?.email}</div> : null}
+              <div className="text-sm font-medium text-ink">{user?.name ?? user?.email}</div>
+              {user?.name && user.email ? <div className="text-xs text-ink-muted">{user.email}</div> : null}
             </div>
             <button
               onClick={signOut}

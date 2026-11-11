@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { useAuth } from "@/components/auth/UseAuth";
 import { Link } from "@tanstack/react-router";
 import { Input, Button } from "@/components/ui";
@@ -11,10 +11,10 @@ export const RegisterModal = () => {
   const [error, setError] = useState<string | null>(null);
   const { register } = useAuth();
 
-  const handleRegister = async (e: React.Event) => {
+  const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      await register(name, email, password);
+      await register(name, email, phone, password);
     } catch (err: any) {
       setError(err.message || "Registration failed. Please try again.");
     }
@@ -75,8 +75,12 @@ export const RegisterModal = () => {
           Create account
         </Button>
         <p className="text-sm text-ink-muted">
-          Already have an account? <Link to="/login">Sign in</Link>
+          Already have an account?{" "}
+          <Link to="/auth" search={{ mode: "signin" }}>
+            Sign in
+          </Link>
         </p>
       </form>
     </div>
   );
+};

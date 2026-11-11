@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { useAuth } from "@/components/auth/UseAuth";
 import { Link } from "@tanstack/react-router";
 import { Input, Button, AlertDialog, AlertDialogAction, AlertDialogCancel } from "@/components/ui";
@@ -9,7 +9,7 @@ export const LoginModal = () => {
   const [error, setError] = useState<string | null>(null);
   const { login } = useAuth();
 
-  const handleLogin = async (e: React.Event) => {
+  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       await login(email, password);
@@ -55,7 +55,7 @@ export const LoginModal = () => {
           </Button>
         </form>
         <p className="text-sm text-ink-muted">
-          Don't have an account? <Link to="/signup">Sign up</Link>
+          Don't have an account? <Link to="/auth" search={{ mode: "signup" }}>Sign up</Link>
         </p>
       </div>
     </AlertDialog>

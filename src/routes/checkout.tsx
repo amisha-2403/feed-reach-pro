@@ -1,12 +1,22 @@
 import { useMemo } from "react";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useAuth } from "@/components/auth/UseAuth";
+import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
+import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/hooks/use-cart";
 import { computeTotals, getCartLines } from "@/lib/cart-store";
 import { PRODUCTS } from "@/lib/marketplace-data";
 import { Input, Button } from "@/components/ui";
 
 export const Route = createFileRoute("/checkout")({
+  ssr: false,
+  beforeLoad: async ({ location }) => {
+    const { data, error } = await supabase.auth.getUser();
+    if (error || !data.user) {
+      throw redirect({
+        to: "/auth",
+        search: { mode: "signin", redirect: location.href },
+      });
+    }
+  },
   meta: {
     title: "Checkout — GramSetu",
     description: "Review your order, confirm delivery, and choose payment method.",
@@ -15,18 +25,11 @@ export const Route = createFileRoute("/checkout")({
 });
 
 function CheckoutPage() {
-  const { user } = useAuth();
   const navigate = useNavigate();
   const state = useCart();
   const lines = getCartLines(state.items);
   const totals = computeTotals(state);
   const isEmpty = lines.length === 0;
-
-  // Prevent access without login
-  if (!user) {
-    navigate("/login");
-    return null;
-  }
 
   const handlePlaceOrder = async () => {
     // TODO: Implement actual order placement
