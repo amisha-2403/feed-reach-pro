@@ -49,7 +49,7 @@ export const Route = createFileRoute("/")({
 
 const stats = [
   { value: "20+", label: "Villages Connected", icon: Network },
-  { value: "500+", label: "Farmers", icon: Sprout },
+  { value: "50+", label: "Farmers", icon: Sprout },
   { value: "200+", label: "Local Shops", icon: ShoppingBag },
   { value: "5,000+", label: "Products Listed", icon: Package },
   { value: "98%", label: "Customer Satisfaction", icon: Sparkles },
@@ -214,9 +214,8 @@ function HomePage() {
             </div>
 
             <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4 text-xs">
-              <TrustPoint>Trusted by 500+ farmers</TrustPoint>
-              <TrustPoint>Same-day village delivery</TrustPoint>
-              <TrustPoint>Secure UPI & COD</TrustPoint>
+              <TrustPoint>Trusted by 50+ farmers</TrustPoint>
+              <TrustPoint>Flexible delivery options</TrustPoint>
             </div>
           </div>
 
