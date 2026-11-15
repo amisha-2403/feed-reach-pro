@@ -229,7 +229,7 @@ function HomePage() {
             {stats.map((s) => (
               <div
                 key={s.label}
-                className="group rounded-2xl bg-gradient-to-br from-accent/50 to-surface p-5 ring-1 ring-black/5 transition-all hover:-translate-y-1 hover:shadow-lg hover:ring-brand/25 dark:from-white/[0.03] dark:to-transparent dark:ring-white/10"
+                className="group rounded-2xl bg-gradient-to-br from-white via-white to-emerald-50/90 p-5 shadow-sm ring-1 ring-brand/15 transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-brand/10 hover:ring-brand/30 dark:from-white/[0.06] dark:via-white/[0.03] dark:to-brand/10 dark:ring-white/10"
               >
                 <div className="mb-3 grid size-10 place-items-center rounded-xl bg-brand/10 text-brand transition-colors group-hover:bg-brand group-hover:text-brand-foreground">
                   <s.icon className="size-5" strokeWidth={1.75} />
