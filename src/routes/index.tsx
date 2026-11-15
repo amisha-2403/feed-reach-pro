@@ -168,24 +168,30 @@ function HomePage() {
       <SiteNav />
 
       {/* ================== HERO ================== */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-accent/40 via-surface to-surface">
-        <div className="pointer-events-none absolute -right-32 -top-32 size-[520px] rounded-full bg-brand/10 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-40 -left-24 size-[420px] rounded-full bg-brand-accent/15 blur-3xl" />
+      <section className="relative flex min-h-[620px] items-center overflow-hidden bg-brand">
+        <img
+          src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=2400&auto=format&fit=crop&q=85"
+          alt="Cattle grazing in a rural field at sunset"
+          fetchPriority="high"
+          className="absolute inset-0 size-full object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/55 to-black/25" />
+        <div className="absolute inset-0 bg-black/10" />
 
-        <div className="relative mx-auto grid max-w-7xl gap-14 px-6 py-20 lg:grid-cols-2 lg:items-center lg:py-28">
+        <div className="relative mx-auto w-full max-w-7xl px-6 py-20 lg:py-28">
           {/* Left */}
-          <div className="animate-fade-in">
-            <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-brand/15 bg-brand/5 px-3 py-1 text-xs font-medium text-brand">
-              <span className="size-1.5 rounded-full bg-brand" />
+          <div className="max-w-3xl animate-fade-in">
+            <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/30 bg-black/20 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm">
+              <span className="size-1.5 rounded-full bg-brand-accent" />
               India's rural commerce bridge · Live in 20+ villages
             </span>
-            <h1 className="mb-6 text-balance text-4xl font-semibold leading-[1.05] tracking-tight text-ink sm:text-5xl lg:text-6xl">
+            <h1 className="mb-6 text-balance text-4xl font-semibold leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl">
               Connecting Villages Through{" "}
-              <span className="bg-gradient-to-r from-brand to-brand-accent bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-white to-brand-accent bg-clip-text text-transparent">
                 Agriculture.
               </span>
             </h1>
-            <p className="mb-8 max-w-[54ch] text-pretty text-base text-ink-muted sm:text-lg">
+            <p className="mb-8 max-w-[54ch] text-pretty text-base text-white/90 sm:text-lg">
               Buy animal feed, seeds, fertilizers, farm produce and farming essentials directly
               from trusted local farmers and village shops.
             </p>
@@ -201,7 +207,7 @@ function HomePage() {
               <Link
                 to="/auth"
                 search={{ mode: "signup" }}
-                className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-surface px-6 py-3 text-sm font-medium text-ink transition-colors hover:border-brand/30 hover:text-brand dark:border-white/15 dark:bg-white/5 dark:text-foreground"
+                className="inline-flex items-center gap-2 rounded-full border border-white/50 bg-black/20 px-6 py-3 text-sm font-medium text-white backdrop-blur-sm transition-colors hover:border-white hover:bg-white/10"
               >
                 Become a Seller
               </Link>
@@ -214,54 +220,6 @@ function HomePage() {
             </div>
           </div>
 
-          {/* Right — collage */}
-          <div className="relative animate-fade-in">
-            <div className="relative mx-auto grid aspect-square w-full max-w-lg grid-cols-6 grid-rows-6 gap-3">
-              <CollageTile
-                span="col-span-4 row-span-4"
-                src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=900&auto=format&fit=crop&q=70"
-                alt="Farmer holding fresh farm produce"
-              />
-              <CollageTile
-                span="col-span-2 row-span-2"
-                src="https://images.unsplash.com/photo-1605000797499-95a51c5269ae?w=500&auto=format&fit=crop&q=70"
-                alt="Animal feed sacks stacked at village shop"
-              />
-              <CollageTile
-                span="col-span-2 row-span-2"
-                src="https://images.unsplash.com/photo-1592982537447-53f9a6b3e5a5?w=500&auto=format&fit=crop&q=70"
-                alt="Tractor ploughing field"
-              />
-              <CollageTile
-                span="col-span-3 row-span-2"
-                src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=600&auto=format&fit=crop&q=70"
-                alt="Golden wheat crops"
-              />
-              <CollageTile
-                span="col-span-3 row-span-2"
-                src="https://images.unsplash.com/photo-1601758124510-52d02ddb7cbd?w=600&auto=format&fit=crop&q=70"
-                alt="Delivery vehicle in rural road"
-              />
-            </div>
-
-            {/* Floating cards */}
-            <FloatingCard className="absolute -left-4 top-8 sm:-left-8" delay="0s">
-              <BadgeCheck className="size-4 text-brand" />
-              Trusted Seller
-            </FloatingCard>
-            <FloatingCard className="absolute -right-2 top-24 sm:-right-6" delay="0.15s">
-              <Truck className="size-4 text-brand" />
-              Same Day Delivery
-            </FloatingCard>
-            <FloatingCard className="absolute -left-2 bottom-20 sm:-left-6" delay="0.3s">
-              <Package className="size-4 text-brand" />
-              1000+ Products
-            </FloatingCard>
-            <FloatingCard className="absolute -right-4 bottom-6 sm:-right-8" delay="0.45s">
-              <Network className="size-4 text-brand" />
-              Local Network
-            </FloatingCard>
-          </div>
         </div>
       </section>
 
@@ -409,41 +367,12 @@ function SectionHeading({
 
 function TrustPoint({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-flex items-center gap-2 text-ink-muted">
-      <span className="grid size-4 place-items-center rounded-full bg-brand/15 text-brand">
+    <span className="inline-flex items-center gap-2 text-white/90">
+      <span className="grid size-4 place-items-center rounded-full bg-white/20 text-white">
         <CheckCircle2 className="size-3" strokeWidth={2.5} />
       </span>
       {children}
     </span>
-  );
-}
-
-function CollageTile({ span, src, alt }: { span: string; src: string; alt: string }) {
-  return (
-    <div
-      className={`${span} overflow-hidden rounded-2xl bg-zinc-100 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.25)] ring-1 ring-black/5 transition-transform duration-500 hover:scale-[1.02] dark:bg-white/5 dark:ring-white/10`}
-    >
-      <img src={src} alt={alt} className="h-full w-full object-cover" />
-    </div>
-  );
-}
-
-function FloatingCard({
-  children,
-  className,
-  delay,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  delay?: string;
-}) {
-  return (
-    <div
-      style={{ animationDelay: delay }}
-      className={`hidden animate-fade-in items-center gap-2 rounded-full border border-white/40 bg-surface/85 px-4 py-2 text-xs font-semibold text-ink shadow-[0_15px_35px_-10px_rgba(0,0,0,0.2)] backdrop-blur-lg sm:inline-flex dark:border-white/10 dark:bg-card/85 ${className ?? ""}`}
-    >
-      {children}
-    </div>
   );
 }
 
