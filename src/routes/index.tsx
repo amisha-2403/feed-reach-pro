@@ -21,9 +21,6 @@ import {
   Bike,
   Home,
   Star,
-  Smartphone,
-  Play,
-
 } from "lucide-react";
 
 import { SiteNav } from "@/components/site/SiteNav";
@@ -515,72 +512,10 @@ function HomePage() {
         </div>
       </section>
 
-      {/* ================== MOBILE APP PROMO ================== */}
-      <section className="px-6 py-16">
-        <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[2rem] bg-gradient-to-br from-brand via-brand to-brand-light p-10 shadow-[0_40px_100px_-30px_rgba(26,77,46,0.55)] lg:p-16">
-          <div className="pointer-events-none absolute -right-20 -top-20 size-80 rounded-full bg-brand-accent/25 blur-3xl" />
-          <div className="pointer-events-none absolute -bottom-24 -left-16 size-72 rounded-full bg-white/10 blur-3xl" />
-
-          <div className="relative grid gap-10 lg:grid-cols-2 lg:items-center">
-            <div>
-              <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-medium text-brand-foreground backdrop-blur-sm">
-                <Smartphone className="size-3.5" />
-                Coming Soon on Android & iOS
-              </span>
-              <h2 className="mb-4 text-balance text-3xl font-semibold leading-tight text-brand-foreground lg:text-4xl">
-                Take GramSetu to the field, in your pocket.
-              </h2>
-              <p className="mb-8 max-w-xl text-pretty text-brand-foreground/85">
-                Order feed on the go, track deliveries offline-first, chat with shopkeepers, and
-                receive daily mandi prices — all from a lightweight app built for rural bandwidth.
-              </p>
-
-              <div className="flex flex-wrap gap-3">
-                <AppBadge icon={Play} store="Google Play" />
-                <AppBadge icon={Apple} store="App Store" />
-              </div>
-
-              <div className="mt-8 flex flex-wrap items-center gap-6 text-xs text-brand-foreground/80">
-                <span className="inline-flex items-center gap-2">
-                  <CheckCircle2 className="size-4" /> Works on 2G / low network
-                </span>
-                <span className="inline-flex items-center gap-2">
-                  <CheckCircle2 className="size-4" /> 12 Indian languages
-                </span>
-              </div>
-            </div>
-
-            {/* Phone mockup */}
-            <div className="relative mx-auto hidden aspect-[9/16] w-56 lg:block">
-              <div className="absolute inset-0 rounded-[2.5rem] bg-black/40 shadow-2xl ring-4 ring-white/20" />
-              <div className="absolute inset-2 overflow-hidden rounded-[2rem] bg-surface">
-                <img
-                  src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=600&auto=format&fit=crop&q=70"
-                  alt="GramSetu mobile app preview"
-                  className="h-1/2 w-full object-cover"
-                />
-                <div className="flex flex-col gap-3 p-4">
-                  <div className="h-3 w-2/3 rounded-full bg-brand/20" />
-                  <div className="h-2 w-full rounded-full bg-black/5" />
-                  <div className="h-2 w-4/5 rounded-full bg-black/5" />
-                  <div className="mt-2 grid grid-cols-3 gap-2">
-                    <div className="h-10 rounded-lg bg-brand/10" />
-                    <div className="h-10 rounded-lg bg-brand-accent/20" />
-                    <div className="h-10 rounded-lg bg-brand/10" />
-                  </div>
-                  <div className="mt-3 h-8 rounded-full bg-brand" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <SiteFooter />
     </div>
   );
 }
-
 /* ---------- helpers ---------- */
 
 function SectionHeading({
@@ -686,20 +621,3 @@ function CategoryCard({
   );
 }
 
-function AppBadge({
-  icon: Icon,
-  store,
-}: {
-  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
-  store: string;
-}) {
-  return (
-    <button className="inline-flex items-center gap-3 rounded-2xl border border-white/25 bg-black/60 px-5 py-3 text-left text-brand-foreground backdrop-blur-sm transition-all hover:-translate-y-0.5 hover:bg-black/75">
-      <Icon className="size-6" strokeWidth={1.5} />
-      <span className="flex flex-col leading-tight">
-        <span className="text-[10px] uppercase tracking-wider opacity-80">Coming soon on</span>
-        <span className="text-sm font-semibold">{store}</span>
-      </span>
-    </button>
-  );
-}
