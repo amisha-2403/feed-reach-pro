@@ -20,13 +20,10 @@ import {
   CheckCircle2,
   Bike,
   Home,
-  Star,
 } from "lucide-react";
 
 import { SiteNav } from "@/components/site/SiteNav";
 import { SiteFooter } from "@/components/site/SiteFooter";
-import { ProductCard } from "@/components/marketplace/ProductCard";
-import { FEATURED_PRODUCTS } from "@/lib/marketplace-data";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -165,48 +162,7 @@ const timelineSteps = [
   { icon: Home, title: "Delivered to Your Doorstep", body: "Fresh, sealed, and on time — signed off at your farm." },
 ];
 
-const stories = [
-  {
-    id: "s1",
-    name: "Anita Deshmukh",
-    role: "Dairy Farmer · Kolhapur",
-    quote:
-      "I doubled my dairy income in 8 months. GramSetu brings feed to my gate and connects me to shops I never reached before.",
-    metric: "2× income in 8 months",
-    avatar: "https://i.pravatar.cc/160?img=47",
-    cover:
-      "https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=900&auto=format&fit=crop&q=70",
-  },
-  {
-    id: "s2",
-    name: "Ravi Kumar",
-    role: "Shop Owner · Rampur",
-    quote:
-      "My little village shop now serves four neighbouring villages. Digital orders come in every morning and I have zero unsold stock.",
-    metric: "+40% weekly orders",
-    avatar: "https://i.pravatar.cc/160?img=12",
-    cover:
-      "https://images.unsplash.com/photo-1605000797499-95a51c5269ae?w=900&auto=format&fit=crop&q=70",
-  },
-  {
-    id: "s3",
-    name: "Suresh Yadav",
-    role: "Organic Farmer · Belgaum",
-    quote:
-      "I used to sell tomatoes at the mandi rate. On GramSetu, customers know my name and pay a fair price directly to me.",
-    metric: "30% higher farm-gate price",
-    avatar: "https://i.pravatar.cc/160?img=13",
-    cover:
-      "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=900&auto=format&fit=crop&q=70",
-  },
-];
-
 function HomePage() {
-  const featured = FEATURED_PRODUCTS.slice(0, 4).map((p, i) => ({
-    ...p,
-    stock: (["in-stock", "low-stock", "in-stock", "in-stock"] as const)[i],
-  }));
-
   return (
     <div className="min-h-screen bg-surface text-ink">
       <SiteNav />
@@ -421,93 +377,6 @@ function HomePage() {
                 </li>
               ))}
             </ol>
-          </div>
-        </div>
-      </section>
-
-      {/* ================== FEATURED PRODUCTS ================== */}
-      <section className="bg-accent/30 py-24 dark:bg-white/[0.02]">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="mb-12 flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <span className="mb-2 inline-block text-xs font-semibold uppercase tracking-wider text-brand">
-                Featured
-              </span>
-              <h2 className="text-balance text-3xl font-semibold text-ink sm:text-4xl">
-                Handpicked from local sellers
-              </h2>
-              <p className="mt-3 max-w-2xl text-pretty text-base text-ink-muted">
-                Curated by our field team every week — the best-selling, best-priced, and
-                highest-rated products across the network.
-              </p>
-            </div>
-            <Link
-              to="/marketplace"
-              className="inline-flex items-center gap-1 text-sm font-medium text-brand hover:text-brand-light"
-            >
-              View all products <ArrowRight className="size-4" />
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {featured.map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ================== CUSTOMER STORIES ================== */}
-      <section className="bg-surface py-24">
-        <div className="mx-auto max-w-7xl px-6">
-          <SectionHeading
-            eyebrow="Rural success stories"
-            title="Real farmers. Real shops. Real change."
-            subtitle="A GramSetu account is a small business upgrade in a rural pocket. Here's what that looks like."
-          />
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-            {stories.map((s) => (
-              <article
-                key={s.id}
-                className="group flex flex-col overflow-hidden rounded-2xl bg-surface ring-1 ring-black/5 transition-all hover:-translate-y-1 hover:shadow-[0_25px_60px_-25px_rgba(26,77,46,0.35)] dark:bg-card dark:ring-white/10"
-              >
-                <div className="relative aspect-[4/3] overflow-hidden bg-zinc-100 dark:bg-white/5">
-                  <img
-                    src={s.cover}
-                    alt={s.name}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-                  <span className="absolute bottom-3 left-3 rounded-full bg-brand-accent px-3 py-1 text-[11px] font-semibold text-brand-accent-foreground shadow-sm">
-                    {s.metric}
-                  </span>
-                </div>
-                <div className="flex flex-1 flex-col gap-4 p-6">
-                  <div className="flex gap-0.5">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star
-                        key={i}
-                        className="size-4 fill-brand-accent text-brand-accent"
-                        strokeWidth={0}
-                      />
-                    ))}
-                  </div>
-                  <blockquote className="text-pretty text-sm leading-relaxed text-ink/90">
-                    "{s.quote}"
-                  </blockquote>
-                  <div className="mt-auto flex items-center gap-3 border-t border-black/5 pt-4 dark:border-white/10">
-                    <img
-                      src={s.avatar}
-                      alt={s.name}
-                      className="size-11 rounded-full object-cover ring-2 ring-brand/20"
-                    />
-                    <div>
-                      <p className="text-sm font-semibold text-ink">{s.name}</p>
-                      <p className="text-xs text-ink-muted">{s.role}</p>
-                    </div>
-                  </div>
-                </div>
-              </article>
-            ))}
           </div>
         </div>
       </section>
