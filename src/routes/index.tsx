@@ -201,7 +201,7 @@ function HomePage() {
                 to="/marketplace"
                 className="group inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-medium text-brand-foreground shadow-[0_10px_30px_-10px_rgba(26,77,46,0.55)] ring-1 ring-brand transition-all hover:bg-brand-light hover:shadow-[0_15px_40px_-10px_rgba(26,77,46,0.65)]"
               >
-                Explore Marketplace
+                Explore Animal Husbandry
                 <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
               </Link>
               <Link
