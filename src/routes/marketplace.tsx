@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
+import { z } from "zod";
 import { ShoppingCart } from "lucide-react";
 
 import { SiteNav } from "@/components/site/SiteNav";
@@ -20,6 +21,10 @@ import {
 } from "@/lib/marketplace-data";
 
 export const Route = createFileRoute("/marketplace")({
+  validateSearch: z.object({
+    category: z.string().optional(),
+    query: z.string().optional(),
+  }),
   head: () => ({
     meta: [
       { title: "Marketplace — GramSetu · Village to Village, Hand to Hand" },
@@ -40,8 +45,10 @@ export const Route = createFileRoute("/marketplace")({
 });
 
 function MarketplacePage() {
-  const [query, setQuery] = useState("");
-  const [category, setCategory] = useState("all");
+  const search = Route.useSearch();
+  const navigate = Route.useNavigate();
+  const [query, setQuery] = useState(search.query ?? "");
+  const [category, setCategory] = useState(search.category ?? "all");
   const [district, setDistrict] = useState("all");
   const [village, setVillage] = useState("all");
   const [sort, setSort] = useState<SortId>("featured");
@@ -50,6 +57,18 @@ function MarketplacePage() {
   const [cart, setCart] = useState<Set<string>>(new Set());
   const [quickView, setQuickView] = useState<Product | null>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
+
+  const updateCategory = (nextCategory: string) => {
+    setCategory(nextCategory);
+    setQuery("");
+    void navigate({
+      search: {
+        category: nextCategory === "all" ? undefined : nextCategory,
+        query: undefined,
+      },
+      replace: true,
+    });
+  };
 
   const filtered = useMemo(() => {
     let out = PRODUCTS.filter((p) => {
@@ -98,6 +117,7 @@ function MarketplacePage() {
     setCategory("all");
     setDistrict("all");
     setVillage("all");
+    void navigate({ search: { category: undefined, query: undefined }, replace: true });
   };
 
   const bySection = {
@@ -116,7 +136,7 @@ function MarketplacePage() {
         query={query}
         onQueryChange={setQuery}
         category={category}
-        onCategoryChange={setCategory}
+        onCategoryChange={updateCategory}
         district={district}
         onDistrictChange={setDistrict}
         village={village}
@@ -136,7 +156,7 @@ function MarketplacePage() {
             {CATEGORIES.map((c) => (
               <button
                 key={c.id}
-                onClick={() => setCategory(c.id)}
+                onClick={() => updateCategory(c.id)}
                 className={`group flex flex-col items-center gap-2 rounded-2xl bg-surface p-3 ring-1 ring-black/5 transition-all hover:-translate-y-0.5 hover:shadow-md hover:ring-brand/25 dark:bg-card dark:ring-white/10 ${
                   category === c.id ? "ring-2 ring-brand" : ""
                 }`}

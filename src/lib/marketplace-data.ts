@@ -13,7 +13,6 @@ export interface Category {
   id: string;
   name: string;
   icon: LucideIcon;
-  count: number;
   accent: string;
   image: string;
 }
@@ -23,7 +22,6 @@ export const CATEGORIES: Category[] = [
     id: "animal-feed",
     name: "Animal Feed",
     icon: Wheat,
-    count: 128,
     accent: "from-amber-100 to-amber-50",
     image:
       "https://images.unsplash.com/photo-1605000797499-95a51c5269ae?w=600&auto=format&fit=crop&q=70",
@@ -32,7 +30,6 @@ export const CATEGORIES: Category[] = [
     id: "seeds",
     name: "Seeds",
     icon: Sprout,
-    count: 94,
     accent: "from-emerald-100 to-emerald-50",
     image:
       "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=600&auto=format&fit=crop&q=70",
@@ -41,7 +38,6 @@ export const CATEGORIES: Category[] = [
     id: "fertilizers",
     name: "Fertilizers",
     icon: FlaskConical,
-    count: 67,
     accent: "from-lime-100 to-lime-50",
     image:
       "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&auto=format&fit=crop&q=70",
@@ -50,7 +46,6 @@ export const CATEGORIES: Category[] = [
     id: "farm-produce",
     name: "Farm Produce",
     icon: Apple,
-    count: 212,
     accent: "from-rose-100 to-rose-50",
     image:
       "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=600&auto=format&fit=crop&q=70",
@@ -59,7 +54,6 @@ export const CATEGORIES: Category[] = [
     id: "organic",
     name: "Organic Products",
     icon: Leaf,
-    count: 45,
     accent: "from-teal-100 to-teal-50",
     image:
       "https://images.unsplash.com/photo-1628689469838-524a4a973b8e?w=600&auto=format&fit=crop&q=70",
@@ -68,7 +62,6 @@ export const CATEGORIES: Category[] = [
     id: "veterinary",
     name: "Veterinary Supplies",
     icon: Stethoscope,
-    count: 38,
     accent: "from-sky-100 to-sky-50",
     image:
       "https://images.unsplash.com/photo-1584515933487-779824d29309?w=600&auto=format&fit=crop&q=70",
@@ -77,7 +70,6 @@ export const CATEGORIES: Category[] = [
     id: "essentials",
     name: "Farming Essentials",
     icon: Tractor,
-    count: 156,
     accent: "from-orange-100 to-orange-50",
     image:
       "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=600&auto=format&fit=crop&q=70",

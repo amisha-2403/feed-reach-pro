@@ -61,7 +61,6 @@ export function FiltersSidebar({ filters, onChange, onReset }: Props) {
             key={c.id}
             id={`cat-${c.id}`}
             label={c.name}
-            hint={`${c.count}`}
             checked={filters.categories.includes(c.id)}
             onChange={() => toggle("categories", c.id)}
           />
@@ -208,13 +207,11 @@ function Group({ title, children }: { title: string; children: React.ReactNode }
 function CheckRow({
   id,
   label,
-  hint,
   checked,
   onChange,
 }: {
   id: string;
   label: string;
-  hint?: string;
   checked: boolean;
   onChange: () => void;
 }) {
@@ -227,7 +224,6 @@ function CheckRow({
         <Checkbox id={id} checked={checked} onCheckedChange={onChange} />
         {label}
       </span>
-      {hint && <span className="text-[10px] text-ink-muted">{hint}</span>}
     </label>
   );
 }

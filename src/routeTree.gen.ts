@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AboutUsRouteImport } from './routes/about-us'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CartRouteImport } from './routes/cart'
+import { Route as CategoriesRouteImport } from './routes/categories'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as MarketplaceRouteImport } from './routes/marketplace'
@@ -52,6 +53,11 @@ const AuthRoute = AuthRouteImport.update({
 const CartRoute = CartRouteImport.update({
   id: '/cart',
   path: '/cart',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CategoriesRoute = CategoriesRouteImport.update({
+  id: '/categories',
+  path: '/categories',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CheckoutRoute = CheckoutRouteImport.update({
@@ -138,6 +144,7 @@ export interface FileRoutesByFullPath {
   '/about-us': typeof AboutUsRoute
   '/auth': typeof AuthRoute
   '/cart': typeof CartRoute
+  '/categories': typeof CategoriesRoute
   '/checkout': typeof CheckoutRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/marketplace': typeof MarketplaceRouteWithChildren
@@ -159,6 +166,7 @@ export interface FileRoutesByTo {
   '/about-us': typeof AboutUsRoute
   '/auth': typeof AuthRoute
   '/cart': typeof CartRoute
+  '/categories': typeof CategoriesRoute
   '/checkout': typeof CheckoutRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/marketplace': typeof MarketplaceRouteWithChildren
@@ -182,6 +190,7 @@ export interface FileRoutesById {
   '/about-us': typeof AboutUsRoute
   '/auth': typeof AuthRoute
   '/cart': typeof CartRoute
+  '/categories': typeof CategoriesRoute
   '/checkout': typeof CheckoutRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/marketplace': typeof MarketplaceRouteWithChildren
@@ -205,6 +214,7 @@ export interface FileRouteTypes {
     | '/about-us'
     | '/auth'
     | '/cart'
+    | '/categories'
     | '/checkout'
     | '/forgot-password'
     | '/marketplace'
@@ -226,6 +236,7 @@ export interface FileRouteTypes {
     | '/about-us'
     | '/auth'
     | '/cart'
+    | '/categories'
     | '/checkout'
     | '/forgot-password'
     | '/marketplace'
@@ -248,6 +259,7 @@ export interface FileRouteTypes {
     | '/about-us'
     | '/auth'
     | '/cart'
+    | '/categories'
     | '/checkout'
     | '/forgot-password'
     | '/marketplace'
@@ -271,6 +283,7 @@ export interface RootRouteChildren {
   AboutUsRoute: typeof AboutUsRoute
   AuthRoute: typeof AuthRoute
   CartRoute: typeof CartRoute
+  CategoriesRoute: typeof CategoriesRoute
   CheckoutRoute: typeof CheckoutRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   MarketplaceRoute: typeof MarketplaceRouteWithChildren
@@ -317,6 +330,13 @@ declare module '@tanstack/react-router' {
       path: '/cart'
       fullPath: '/cart'
       preLoaderRoute: typeof CartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/categories': {
+      id: '/categories'
+      path: '/categories'
+      fullPath: '/categories'
+      preLoaderRoute: typeof CategoriesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/checkout': {
@@ -464,6 +484,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutUsRoute: AboutUsRoute,
   AuthRoute: AuthRoute,
   CartRoute: CartRoute,
+  CategoriesRoute: CategoriesRoute,
   CheckoutRoute: CheckoutRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   MarketplaceRoute: MarketplaceRouteWithChildren,

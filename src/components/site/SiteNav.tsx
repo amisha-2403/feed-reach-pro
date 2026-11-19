@@ -8,7 +8,7 @@ import { Logo } from "@/components/brand/Logo";
 const navLinks = [
   { label: "Home", to: "/" as const },
   { label: "Animal Husbandry", to: "/marketplace" as const },
-  { label: "Categories", to: "/marketplace" as const, hash: "categories" },
+  { label: "Categories", to: "/categories" as const },
   { label: "Orders", to: "/marketplace" as const, hash: "featured" },
   { label: "About", to: "/about-us" as const },
 ];
