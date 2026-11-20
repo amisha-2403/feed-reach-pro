@@ -11,6 +11,7 @@ import {
 import type { Session } from "@supabase/supabase-js";
 import type { AppRole } from "@/lib/roles";
 import { supabase } from "@/integrations/supabase/client";
+import { cartStore } from "@/lib/cart-store";
 
 interface AuthUser {
   id: string;
@@ -71,6 +72,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(null);
         setIsLoading(false);
       }
+    }).catch((error: unknown) => {
+      if (!active || authEventVersion.current !== initialVersion) return;
+      console.error("Unable to restore Supabase session:", error);
+      setSession(null);
+      setUser(null);
+      setIsLoading(false);
     });
 
     return () => {
@@ -82,6 +89,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let active = true;
     const sessionUser = session?.user;
+    cartStore.setOwner(sessionUser?.id ?? null);
 
     if (!sessionUser) {
       setUser(null);
@@ -118,7 +126,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         role: (roleResult.data?.role as AppRole | undefined) ?? "customer",
         createdAt: sessionUser.created_at,
       });
-      setIsLoading(false);
+    }).catch((error: unknown) => {
+      if (!active) return;
+      console.error("Unable to load the user profile:", error);
+      const email = sessionUser.email ?? "";
+      setUser({
+        id: sessionUser.id,
+        name: sessionUser.user_metadata?.full_name || email.split("@")[0] || "Account",
+        email,
+        phone: sessionUser.phone ?? "",
+        role: "customer",
+        createdAt: sessionUser.created_at,
+      });
+    }).finally(() => {
+      if (active) setIsLoading(false);
     });
 
     return () => {

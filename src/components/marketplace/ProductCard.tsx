@@ -1,8 +1,10 @@
 import { Star, Heart, Eye, ShoppingCart, MapPin, Truck, ShieldCheck } from "lucide-react";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { useAuth } from "@/components/auth/UseAuth";
 import type { Product } from "@/lib/marketplace-data";
 import { CATEGORY_LOOKUP } from "@/lib/marketplace-data";
 import { cartStore } from "@/lib/cart-store";
+import { toast } from "sonner";
 
 interface ProductCardProps {
   product: Product;
@@ -23,6 +25,8 @@ export function ProductCard({
   onToggleWishlist,
   wishlisted,
 }: ProductCardProps) {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const discount = Math.round(
     ((product.originalPrice - product.price) / product.originalPrice) * 100,
   );
@@ -122,7 +126,15 @@ export function ProductCard({
         <div className="mt-2 grid grid-cols-[1fr_auto] gap-2">
           <button
             disabled={outOfStock}
-            onClick={() => !outOfStock && cartStore.add(product.id)}
+            onClick={() => {
+              if (outOfStock) return;
+              if (!user) {
+                navigate({ to: "/auth", search: { mode: "signin", redirect: "/cart" } });
+                return;
+              }
+              cartStore.add(product.id);
+              toast.success("Added to your cart");
+            }}
             className="inline-flex items-center justify-center gap-2 rounded-full bg-brand py-2.5 text-sm font-medium text-brand-foreground shadow-sm transition-all hover:bg-brand-light hover:shadow-md disabled:cursor-not-allowed disabled:bg-ink-muted/40 disabled:text-white"
           >
             <ShoppingCart className="size-4" />

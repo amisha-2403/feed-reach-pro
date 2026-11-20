@@ -69,7 +69,7 @@ export const COUPONS: Coupon[] = [
 /*  Store                                                              */
 /* ------------------------------------------------------------------ */
 
-const KEY = "gramsetu.cart.v1";
+const KEY_PREFIX = "gramsetu.cart.v2.";
 type Listener = (s: CartState) => void;
 
 function initialState(): CartState {
@@ -79,44 +79,45 @@ function initialState(): CartState {
 class CartStore {
   private state: CartState = initialState();
   private listeners = new Set<Listener>();
-  private hydrated = false;
+  private ownerId: string | null = null;
+  private hydratedKey: string | null = null;
+  private listeningForStorage = false;
+
+  private get storageKey() {
+    return this.ownerId ? `${KEY_PREFIX}${this.ownerId}` : null;
+  }
 
   private hydrate() {
-    if (this.hydrated || typeof window === "undefined") return;
-    this.hydrated = true;
+    const key = this.storageKey;
+    if (!key || this.hydratedKey === key || typeof window === "undefined") return;
+    this.hydratedKey = key;
     try {
-      const raw = window.localStorage.getItem(KEY);
+      const raw = window.localStorage.getItem(key);
       if (raw) this.state = { ...initialState(), ...JSON.parse(raw) };
-      else {
-        // Seed with a couple realistic items so demo is compelling
-        this.state = {
-          ...initialState(),
-          items: [
-            { productId: "p1", qty: 2, addedAt: Date.now() },
-            { productId: "p3", qty: 1, addedAt: Date.now() },
-            { productId: "p5", qty: 3, addedAt: Date.now() },
-          ],
-        };
-      }
+      else this.state = initialState();
     } catch {
       this.state = initialState();
     }
-    window.addEventListener("storage", (e) => {
-      if (e.key === KEY && e.newValue) {
-        try {
-          this.state = { ...initialState(), ...JSON.parse(e.newValue) };
-          this.emit();
-        } catch {
-          /* noop */
+    if (!this.listeningForStorage) {
+      this.listeningForStorage = true;
+      window.addEventListener("storage", (e) => {
+        if (e.key === this.storageKey && e.newValue) {
+          try {
+            this.state = { ...initialState(), ...JSON.parse(e.newValue) };
+            this.emit();
+          } catch {
+            /* noop */
+          }
         }
-      }
-    });
+      });
+    }
   }
 
   private persist() {
-    if (typeof window === "undefined") return;
+    const key = this.storageKey;
+    if (!key || typeof window === "undefined") return;
     try {
-      window.localStorage.setItem(KEY, JSON.stringify(this.state));
+      window.localStorage.setItem(key, JSON.stringify(this.state));
     } catch {
       /* noop */
     }
@@ -137,6 +138,15 @@ class CartStore {
     return this.state;
   }
 
+  setOwner(ownerId: string | null) {
+    if (this.ownerId === ownerId) return;
+    this.ownerId = ownerId;
+    this.hydratedKey = null;
+    this.state = initialState();
+    this.hydrate();
+    this.emit();
+  }
+
   subscribe(l: Listener): () => void {
     this.hydrate();
     this.listeners.add(l);
@@ -144,6 +154,7 @@ class CartStore {
   }
 
   add(productId: string, qty = 1) {
+    if (!this.ownerId) return false;
     this.hydrate();
     const existing = this.state.items.find((i) => i.productId === productId);
     const items = existing
@@ -154,6 +165,7 @@ class CartStore {
     // If it was saved, remove from saved
     const saved = this.state.saved.filter((i) => i.productId !== productId);
     this.set({ items, saved });
+    return true;
   }
 
   setQty(productId: string, qty: number) {

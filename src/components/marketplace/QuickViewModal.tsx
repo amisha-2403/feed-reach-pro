@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { Heart, MapPin, Minus, Plus, Share2, ShieldCheck, ShoppingCart, Star, Truck, Zap } from "lucide-react";
 import {
   Dialog,
@@ -8,6 +9,9 @@ import {
 } from "@/components/ui/dialog";
 import type { Product } from "@/lib/marketplace-data";
 import { CATEGORY_LOOKUP } from "@/lib/marketplace-data";
+import { useAuth } from "@/components/auth/UseAuth";
+import { cartStore } from "@/lib/cart-store";
+import { toast } from "sonner";
 
 interface Props {
   product: Product | null;
@@ -19,6 +23,8 @@ interface Props {
 export function QuickViewModal({ product, onClose, onToggleWishlist, wishlisted }: Props) {
   const [activeImg, setActiveImg] = useState(0);
   const [qty, setQty] = useState(1);
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   if (!product) return null;
   const discount = Math.round(
@@ -145,7 +151,15 @@ export function QuickViewModal({ product, onClose, onToggleWishlist, wishlisted 
 
             {/* Actions */}
             <div className="mt-2 grid grid-cols-2 gap-2">
-              <button className="inline-flex items-center justify-center gap-2 rounded-full border border-brand py-2.5 text-sm font-medium text-brand transition-colors hover:bg-brand/5">
+              <button onClick={() => {
+                if (!user) {
+                  navigate({ to: "/auth", search: { mode: "signin", redirect: "/cart" } });
+                  onClose();
+                  return;
+                }
+                cartStore.add(product.id, qty);
+                toast.success("Added to your cart");
+              }} className="inline-flex items-center justify-center gap-2 rounded-full border border-brand py-2.5 text-sm font-medium text-brand transition-colors hover:bg-brand/5">
                 <ShoppingCart className="size-4" /> Add to Cart
               </button>
               <button className="inline-flex items-center justify-center gap-2 rounded-full bg-brand py-2.5 text-sm font-medium text-brand-foreground shadow-sm transition-all hover:bg-brand-light hover:shadow-md">

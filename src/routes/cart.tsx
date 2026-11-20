@@ -1,5 +1,5 @@
-import { useMemo } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useMemo } from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, ShoppingCart } from "lucide-react";
 
 import { SiteNav } from "@/components/site/SiteNav";
@@ -7,6 +7,7 @@ import { SiteFooter } from "@/components/site/SiteFooter";
 import { useCart } from "@/hooks/use-cart";
 import { computeTotals, getCartLines } from "@/lib/cart-store";
 import { PRODUCTS } from "@/lib/marketplace-data";
+import { useAuth } from "@/components/auth/UseAuth";
 import {
   CartItemRow,
   CartSummary,
@@ -36,10 +37,18 @@ export const Route = createFileRoute("/cart")({
 });
 
 function CartPage() {
+  const { user, isLoading } = useAuth();
+  const navigate = useNavigate();
   const state = useCart();
   const lines = getCartLines(state.items);
   const totals = computeTotals(state);
   const isEmpty = lines.length === 0;
+
+  useEffect(() => {
+    if (!isLoading && !user) {
+      navigate({ to: "/auth", search: { mode: "signin", redirect: "/cart" }, replace: true });
+    }
+  }, [isLoading, navigate, user]);
 
   const rows = useMemo(() => {
     const inCartIds = new Set(state.items.map((i) => i.productId));
@@ -60,6 +69,10 @@ function CartPage() {
     ).slice(0, 4);
     return { fbt, recommended, recentlyViewed, trending };
   }, [state.items]);
+
+  if (isLoading || !user) {
+    return <div className="grid min-h-screen place-items-center text-sm text-ink-muted">Checking your sign-in…</div>;
+  }
 
   return (
     <div className="min-h-screen bg-surface pb-28 text-ink lg:pb-0">

@@ -7,6 +7,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { CATEGORIES, DISTRICTS, SORT_OPTIONS, type SortId } from "@/lib/marketplace-data";
+import { useAuth } from "@/components/auth/UseAuth";
+import { useNavigate } from "@tanstack/react-router";
 
 interface Props {
   query: string;
@@ -41,6 +43,8 @@ export function MarketplaceHeader({
   cartCount,
   onOpenFilters,
 }: Props) {
+  const { user, isLoading } = useAuth();
+  const navigate = useNavigate();
   const districtObj = DISTRICTS.find((d) => d.name === district);
   const villages = districtObj?.villages ?? [];
 
@@ -73,9 +77,9 @@ export function MarketplaceHeader({
             <IconAction label="Wishlist" count={wishlistCount}>
               <Heart className="size-5" />
             </IconAction>
-            <IconAction label="Cart" count={cartCount}>
+            {!isLoading && user && <IconAction label="Cart" count={cartCount} onClick={() => navigate({ to: "/cart" })}>
               <ShoppingCart className="size-5" />
-            </IconAction>
+            </IconAction>}
             <IconAction label="Profile">
               <User className="size-5" />
             </IconAction>
@@ -190,15 +194,18 @@ function IconAction({
   children,
   label,
   count,
+  onClick,
 }: {
   children: React.ReactNode;
   label: string;
   count?: number;
+  onClick?: () => void;
 }) {
   return (
     <button
       type="button"
       aria-label={label}
+      onClick={onClick}
       className="relative grid size-10 place-items-center rounded-full text-ink transition-colors hover:bg-accent hover:text-brand dark:text-foreground dark:hover:bg-white/5"
     >
       {children}

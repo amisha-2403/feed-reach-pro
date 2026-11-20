@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import {
   ChevronRight,
   Heart,
@@ -34,6 +34,9 @@ import { SiteNav } from "@/components/site/SiteNav";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { ProductCard } from "@/components/marketplace/ProductCard";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { useAuth } from "@/components/auth/UseAuth";
+import { cartStore } from "@/lib/cart-store";
+import { toast } from "sonner";
 import {
   PRODUCTS,
   SELLERS,
@@ -101,6 +104,8 @@ const ADDRESSES = [
 ];
 
 function ProductDetailsPage() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const { product } = Route.useLoaderData() as { product: Product };
   const seller = SELLERS.find((s) => s.id === product.sellerId);
   const category = CATEGORY_LOOKUP[product.category];
@@ -423,6 +428,15 @@ function ProductDetailsPage() {
 
               <button
                 disabled={outOfStock}
+                onClick={() => {
+                  if (outOfStock) return;
+                  if (!user) {
+                    navigate({ to: "/auth", search: { mode: "signin", redirect: "/cart" } });
+                    return;
+                  }
+                  cartStore.add(product.id, qty);
+                  toast.success("Added to your cart");
+                }}
                 className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand py-3 text-sm font-semibold text-brand-foreground shadow-sm transition-all hover:bg-brand-light hover:shadow-md disabled:cursor-not-allowed disabled:bg-ink-muted/40"
               >
                 <ShoppingCart className="size-4" />
@@ -727,6 +741,13 @@ function ProductDetailsPage() {
         </div>
         <button
           disabled={outOfStock}
+          onClick={() => {
+            if (!user) {
+              navigate({ to: "/auth", search: { mode: "signin", redirect: "/cart" } });
+              return;
+            }
+            navigate({ to: "/cart" });
+          }}
           className="inline-flex items-center justify-center gap-2 rounded-full border border-brand py-2.5 text-xs font-semibold text-brand disabled:opacity-50"
         >
           <ShoppingCart className="size-4" /> Cart

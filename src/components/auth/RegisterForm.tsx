@@ -14,6 +14,7 @@ import {
   shopkeeperSignupSchema,
   type AnySignup,
 } from "@/lib/auth-schemas";
+import { getSafeAuthRedirect } from "@/lib/auth-redirect";
 
 const schemaByRole = {
   customer: customerSignupSchema,
@@ -24,12 +25,12 @@ const schemaByRole = {
 
 type Role = Exclude<AppRole, "admin">;
 
-export function RegisterForm({ onSwitchToLogin }: { onSwitchToLogin: () => void }) {
+export function RegisterForm({ onSwitchToLogin, redirectTo }: { onSwitchToLogin: () => void; redirectTo?: string }) {
   const [role, setRole] = useState<Role>("customer");
   return (
     <div className="flex flex-col gap-6">
       <RoleTabs value={role} onChange={setRole} />
-      <RoleForm key={role} role={role} onSwitchToLogin={onSwitchToLogin} />
+      <RoleForm key={role} role={role} onSwitchToLogin={onSwitchToLogin} redirectTo={redirectTo} />
     </div>
   );
 }
@@ -64,7 +65,7 @@ function RoleTabs({ value, onChange }: { value: Role; onChange: (r: Role) => voi
   );
 }
 
-function RoleForm({ role, onSwitchToLogin }: { role: Role; onSwitchToLogin: () => void }) {
+function RoleForm({ role, onSwitchToLogin, redirectTo }: { role: Role; onSwitchToLogin: () => void; redirectTo?: string }) {
   const navigate = useNavigate();
   const schema = useMemo(() => schemaByRole[role], [role]);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -104,14 +105,21 @@ function RoleForm({ role, onSwitchToLogin }: { role: Role; onSwitchToLogin: () =
       meta.license_number = values.license_number;
     }
 
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/`,
-        data: meta,
-      },
-    });
+    let response: Awaited<ReturnType<typeof supabase.auth.signUp>>;
+    try {
+      response = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+          data: meta,
+        },
+      });
+    } catch (cause) {
+      toast.error(cause instanceof Error ? cause.message : "Unable to create your account. Please try again.");
+      return;
+    }
+    const { data, error } = response;
 
     if (error) {
       toast.error(error.message);
@@ -123,7 +131,7 @@ function RoleForm({ role, onSwitchToLogin }: { role: Role; onSwitchToLogin: () =
       return;
     }
     toast.success(`Welcome to GramSetu, ${meta.full_name ?? ""}`);
-    navigate({ to: ROLE_DASHBOARDS[values.role] });
+    navigate({ to: getSafeAuthRedirect(redirectTo) ?? ROLE_DASHBOARDS[values.role] });
   }
 
   return (

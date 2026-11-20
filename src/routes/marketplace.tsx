@@ -10,6 +10,8 @@ import { MarketplaceHeader } from "@/components/marketplace/MarketplaceHeader";
 import { FiltersSidebar, DEFAULT_FILTERS, type FilterState } from "@/components/marketplace/FiltersSidebar";
 import { SellerCard } from "@/components/marketplace/SellerCard";
 import { QuickViewModal } from "@/components/marketplace/QuickViewModal";
+import { useAuth } from "@/components/auth/UseAuth";
+import { useCartCount } from "@/hooks/use-cart";
 import { EmptyState } from "@/components/marketplace/EmptyState";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import {
@@ -45,6 +47,7 @@ export const Route = createFileRoute("/marketplace")({
 });
 
 function MarketplacePage() {
+  const { user, isLoading } = useAuth();
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
   const [query, setQuery] = useState(search.query ?? "");
@@ -54,7 +57,7 @@ function MarketplacePage() {
   const [sort, setSort] = useState<SortId>("featured");
   const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
   const [wishlist, setWishlist] = useState<Set<string>>(new Set());
-  const [cart, setCart] = useState<Set<string>>(new Set());
+  const cartCount = useCartCount();
   const [quickView, setQuickView] = useState<Product | null>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
 
@@ -145,7 +148,7 @@ function MarketplacePage() {
         onSortChange={setSort}
         productCount={filtered.length}
         wishlistCount={wishlist.size}
-        cartCount={cart.size}
+        cartCount={cartCount}
         onOpenFilters={() => setFiltersOpen(true)}
       />
 
@@ -254,14 +257,13 @@ function MarketplacePage() {
       </Sheet>
 
       {/* Mobile sticky bottom bar */}
-      <div className="fixed inset-x-0 bottom-0 z-50 border-t border-black/5 bg-surface/95 p-3 backdrop-blur-md lg:hidden dark:border-white/10 dark:bg-background/95">
-        <a
-          href="/cart"
-          className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand py-3 text-sm font-semibold text-brand-foreground shadow-md"
-        >
-          <ShoppingCart className="size-4" /> View Cart ({cart.size})
-        </a>
-      </div>
+      {!isLoading && user && (
+        <div className="fixed inset-x-0 bottom-0 z-50 border-t border-black/5 bg-surface/95 p-3 backdrop-blur-md lg:hidden dark:border-white/10 dark:bg-background/95">
+          <a href="/cart" className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand py-3 text-sm font-semibold text-brand-foreground shadow-md">
+            <ShoppingCart className="size-4" /> View Cart ({cartCount})
+          </a>
+        </div>
+      )}
 
       <QuickViewModal
         product={quickView}

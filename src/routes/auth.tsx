@@ -2,11 +2,12 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 
-import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/components/auth/UseAuth";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { RegisterForm } from "@/components/auth/RegisterForm";
-import { ROLE_DASHBOARDS, type AppRole } from "@/lib/roles";
+import { ROLE_DASHBOARDS } from "@/lib/roles";
+import { getSafeAuthRedirect } from "@/lib/auth-redirect";
 
 const authSearch = z.object({
   mode: z.enum(["signin", "signup"]).optional(),
@@ -28,26 +29,15 @@ export const Route = createFileRoute("/auth")({
 function AuthPage() {
   const search = Route.useSearch();
   const navigate = useNavigate();
+  const { user, isLoading } = useAuth();
   const [mode, setMode] = useState<"signin" | "signup">(search.mode ?? "signin");
 
-  // If already signed in, bounce to role dashboard
+  // Keep auth-page redirects aligned with the shared Supabase session provider.
   useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      const { data } = await supabase.auth.getUser();
-      if (cancelled || !data.user) return;
-      const { data: roleRow } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", data.user.id)
-        .maybeSingle();
-      const role = (roleRow?.role as AppRole | undefined) ?? "customer";
-      navigate({ to: search.redirect && search.redirect.startsWith("/") ? search.redirect : ROLE_DASHBOARDS[role] });
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [navigate, search.redirect]);
+    if (!isLoading && user) {
+      navigate({ to: getSafeAuthRedirect(search.redirect) ?? ROLE_DASHBOARDS[user.role] });
+    }
+  }, [isLoading, navigate, search.redirect, user]);
 
   return (
     <AuthShell
@@ -61,7 +51,7 @@ function AuthPage() {
       {mode === "signin" ? (
         <LoginForm onSwitchToRegister={() => setMode("signup")} redirectTo={search.redirect} />
       ) : (
-        <RegisterForm onSwitchToLogin={() => setMode("signin")} />
+        <RegisterForm onSwitchToLogin={() => setMode("signin")} redirectTo={search.redirect} />
       )}
     </AuthShell>
   );
