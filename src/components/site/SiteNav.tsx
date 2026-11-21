@@ -27,6 +27,7 @@ export function SiteNav() {
     <nav className="sticky top-0 z-50 w-full border-b border-black/5 bg-surface/80 backdrop-blur-md dark:border-white/10 dark:bg-background/70">
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6">
         <div className="flex items-center gap-8">
+          <Logo />
           <div className="hidden items-center gap-6 md:flex">
             {navLinks.map((l) => (
               <Link
@@ -133,7 +134,6 @@ export function SiteNav() {
           >
             {mobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
           </button>
-          <Logo />
         </div>
       </div>
 
